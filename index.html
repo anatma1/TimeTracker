@@ -2,359 +2,987 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TPN LipidCalc</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>יומן נוכחות - שניידר</title>
     <style>
         :root {
-            --primary: #0284c7; 
-            --primary-light: #e0f2fe;
-            --primary-soft: #f0f9ff;
-            --success: #059669; 
-            --success-light: #d1fae5;
-            --success-bg: #ecfdf5;
-            --warning: #d97706; 
-            --warning-light: #fef9c3;
-            --danger: #dc2626;
-            --danger-bg: #fef2f2;
-            --bg: linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%); 
-            --text-main: #334155;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --text: #2f3640;
+            --border: #dcdde1;
         }
-
-        body { 
-            font-family: -apple-system, system-ui, sans-serif; 
-            background: var(--bg); margin: 0; padding: 10px; 
-            direction: rtl; color: var(--text-main);
-            min-height: 100vh; display: flex; align-items: flex-start; justify-content: center;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
         }
-
-        .app-container {
-            width: 100%; max-width: 450px; margin: 0 auto;
-            background: #ffffff; border-radius: 24px;
-            box-shadow: 0 8px 30px rgba(14, 165, 233, 0.08);
-            overflow: hidden; border: 1px solid #f8fafc;
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-
-        .header {
-            background: #ffffff; color: var(--primary);
-            padding: 15px 15px 10px; text-align: center;
-            border-bottom: 1px solid var(--primary-soft);
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
-        .header-icon {
-            font-size: 1.8rem; margin-bottom: 5px;
-            display: inline-block;
-            background: var(--primary-soft);
-            width: 50px; height: 50px; line-height: 50px;
-            border-radius: 50%;
+        .daily-greeting {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            color: var(--secondary);
+        }
+        .daily-greeting .greeting-main {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .daily-greeting .greeting-sub {
+            font-size: 16px;
         }
 
-        .header h1 { margin: 0; font-size: 1.3rem; font-weight: 800; }
-
-        .content { padding: 12px 15px; background: #fbfdfe; }
-
-        .input-card {
-            background: #ffffff; border: 1px solid var(--border);
-            border-radius: 16px; padding: 12px; margin-bottom: 10px;
-        }
-        
-        .step-title { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .step-num {
-            background: var(--primary-light); color: var(--primary);
-            width: 24px; height: 24px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 0.85rem;
-        }
-        .step-text { font-weight: 700; font-size: 1rem; color: var(--text-main); }
-
-        .input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-
-        input, select {
-            padding: 10px; border: 2px solid #f1f5f9;
-            border-radius: 10px; font-size: 0.95rem; font-weight: 600;
-            box-sizing: border-box; color: var(--text-main); background: #f8fafc;
-        }
-
-        .weight-input {
-            width: 110px !important;
-            background: var(--primary-light) !important;
-            border-color: #bae6fd !important;
+        .quick-action-panel {
+            background: #e8f4fd;
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
             text-align: center;
         }
+        .quick-action-panel h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .quick-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .quick-btn {
+            flex: 1;
+            padding: 20px 10px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .quick-btn:active {
+            transform: scale(0.96);
+        }
+        .quick-btn.btn-in { background-color: #2ecc71; }
+        .quick-btn.btn-out { background-color: #e74c3c; }
 
-        .rate-control {
-            display: flex; align-items: center;
-            background: var(--warning-light);
-            border: 2px solid #fde047;
-            border-radius: 10px; overflow: hidden;
+        .header-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .settings-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        input[type="number"], input[type="time"], input[type="text"], select {
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 15px; 
+            font-family: inherit;
+        }
+        .setting-item input { width: 70px; }
+        .setting-item input#monthly-target { width: 90px; } /* קצת יותר רחב לטקסט ריק */
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
         }
 
-        .rate-input {
-            width: 60px !important; border: none !important;
-            background: transparent !important; text-align: center;
-            padding: 10px 0 !important; font-size: 1.1rem !important;
+        .compact-dashboard {
+            margin-bottom: 25px;
         }
-
-        .step-btn {
-            background: rgba(234, 179, 8, 0.1); border: none;
-            color: var(--warning); font-size: 1.2rem; font-weight: 800;
-            width: 35px; height: 100%; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
         }
-
-        .mode-toggle {
-            display: flex; background: #f1f5f9; padding: 4px; border-radius: 12px; margin-bottom: 15px;
+        .stat-card {
+            background: var(--primary);
+            color: white;
+            padding: 12px 8px;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .mode-toggle label {
-            flex: 1; text-align: center; padding: 10px 5px; font-size: 0.85rem; font-weight: 800;
-            cursor: pointer; border-radius: 9px; transition: 0.2s; color: var(--text-muted);
-            line-height: 1.3;
+        .stat-card.vacation-card { background: #e67e22; }
+        .stat-card.overtime-card { background: #27ae60; }
+        .stat-card h3 {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            font-weight: normal;
         }
-        .mode-toggle input { display: none; }
-        .mode-toggle input:checked + label {
-            background: #ffffff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .stat-card .value { 
+            font-size: 20px; 
+            font-weight: bold; 
         }
-
-        .custom-omg-card {
-            background: #fff7ed; border: 1px solid #ffedd5;
-            border-radius: 14px; padding: 12px; margin-top: 10px;
-            display: none; animation: slideDown 0.3s ease-out;
+        .stat-card .sub-value { 
+            font-size: 11px; 
+            margin-top: 2px; 
+            opacity: 0.9; 
         }
-        @keyframes slideDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
-
-        .fluid-info-inline {
-            font-size: 0.8rem; font-weight: 700; color: #0369a1;
-            margin-top: 8px; text-align: left; padding-left: 5px;
-            display: none;
-        }
-
-        .result-card {
-            background: var(--success-bg); border: 2px solid #a7f3d0;
-            border-radius: 18px; padding: 15px; text-align: center;
-            display: none; margin-top: 10px;
-        }
-
-        .result-val { font-size: 2.6rem; font-weight: 900; color: var(--success); margin: 0; line-height: 1; }
         
-        .reason-box {
-            display: inline-flex; align-items: center;
-            padding: 5px 12px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: 700; margin: 8px 0;
+        .day-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.5s;
         }
-        .reason-weight { background: #ffffff; color: var(--primary); border: 1px solid var(--primary-light); }
-        .reason-perc { background: #ffffff; color: var(--warning); border: 1px solid #fde68a; }
-        .reason-vol { background: #ffffff; color: var(--danger); border: 1px solid #fecaca; }
-
-        .syringe-badge {
-            background: #334155; color: white; padding: 4px 12px;
-            border-radius: 8px; font-size: 0.8rem; font-weight: 800;
-            margin-top: 5px; display: inline-block;
+        .day-row:nth-child(even) { background-color: #f8f9fa; }
+        .day-row.weekend { background-color: #fff3cd; }
+        .day-info {
+            font-weight: bold;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        .inputs-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .time-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .time-block {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #ebeef5;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .time-display {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 42px;
+            text-align: center;
+        }
+        .punch-btn {
+            background-color: #2ecc71;
+            padding: 6px 10px;
+            font-weight: bold;
+            border-radius: 6px;
+            color: white;
+            border: none;
+            font-size: 13px;
+        }
+        .punch-btn.btn-out { background-color: #e74c3c; }
+        .edit-btn, .save-btn {
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+        .edit-btn { background-color: #95a5a6; }
+        .save-btn { background-color: #f39c12; }
+        .manual-btn { background-color: #8e44ad; }
+        .daily-total {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 15px;
+        }
+        .week-summary {
+            background-color: #dfe6e9;
+            padding: 12px 15px;
+            font-weight: bold;
+            color: var(--primary);
+            border-radius: 6px;
+            margin: 10px 0 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-right: 4px solid var(--accent);
+            font-size: 14px;
         }
 
-        .result-meta { 
-            font-size: 0.85rem; color: #064e3b; margin-top: 10px; 
-            border-top: 1px dashed #a7f3d0; padding-top: 10px; text-align: right;
+        .bottom-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border);
+        }
+        .notes-section {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .notes-section h3 {
+            margin-top: 0;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        .add-task { display: flex; gap: 10px; margin-bottom: 20px; }
+        .add-task input { flex-grow: 1; }
+        .task-list { list-style: none; padding: 0; margin: 0; }
+        .task-item {
+            display: flex; align-items: center; gap: 12px;
+            background: white; padding: 12px; border-radius: 6px;
+            margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .task-item.done span { text-decoration: line-through; color: #95a5a6; }
+        .task-item span { flex-grow: 1; font-size: 15px; }
+        input[type="checkbox"] { width: 20px; height: 20px; }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+        .whatsapp-btn:hover { background-color: #128C7E; }
+
+        .footer-credits {
+            text-align: center;
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: 25px;
+            padding-bottom: 10px;
         }
 
-        .pharmacist-warning {
-            background: var(--danger-bg); border: 1px solid #fecaca;
-            color: var(--danger); border-radius: 10px; padding: 8px;
-            margin-top: 10px; font-size: 0.75rem; font-weight: 700;
-            display: none; text-align: right;
+        @media (max-width: 768px) {
+            .day-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 15px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                margin-bottom: 10px;
+                background-color: white;
+            }
+            .day-row:nth-child(even) { background-color: white; }
+            .day-info {
+                font-size: 15px;
+                border-bottom: 1px solid var(--bg);
+                padding-bottom: 8px;
+            }
+            .inputs-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            select { width: 100%; margin-bottom: 5px; }
+            .time-inputs {
+                justify-content: flex-start;
+                gap: 8px;
+            }
+            .time-block { flex: 1; justify-content: center; }
+            .daily-total { text-align: left; margin-top: 5px; }
+            .week-summary { flex-direction: column; gap: 10px; text-align: center; }
+            .dashboard { grid-template-columns: repeat(3, 1fr); }
+            .settings-panel { flex-direction: column; align-items: stretch; }
+            .setting-item { justify-content: space-between; }
+            .setting-item input { width: 100px; text-align: center; }
         }
-
-        .footer { text-align: center; padding: 12px; font-size: 0.7rem; color: #94a3b8; font-weight: 500; }
-        
-        option.dex-10 { color: #3b82f6; font-weight: bold; } 
-        option.dex-12-5 { color: #10b981; font-weight: bold; } 
-        option.dex-15 { color: #ef4444; font-weight: bold; } 
-
+        @media (max-width: 480px) {
+            .dashboard { grid-template-columns: repeat(2, 1fr); }
+            .stat-card.vacation-card { grid-column: 1 / -1; }
+        }
     </style>
 </head>
 <body>
-<div class="app-container">
-    <div class="header">
-        <div class="header-icon">🩺</div>
-        <h1>TPN LipidCalc</h1>
-        <p>Schneider Children's Medical Center</p>
+
+<div class="container">
+    <h1>
+        📇⏱️ יומן נוכחות - שניידר
+    </h1>
+    
+    <div class="daily-greeting" id="daily-greeting"></div>
+    
+    <div class="quick-action-panel">
+        <h2 id="quick-punch-title">החתמה מהירה להיום</h2>
+        <div class="quick-buttons">
+            <button class="quick-btn btn-in" onclick="quickPunch('in')">📥 כניסה</button>
+            <button class="quick-btn btn-out" onclick="quickPunch('out')">📤 יציאה</button>
+        </div>
     </div>
-    <div class="content">
+    
+    <div class="header-controls">
+        <div class="month-nav">
+            <button id="next-month">החודש הבא &gt;</button>
+            <strong id="current-month-display" style="font-size: 18px;"></strong>
+            <button id="prev-month">&lt; החודש הקודם</button>
+        </div>
         
-        <div class="mode-toggle">
-            <input type="radio" name="calcMode" id="startMode" value="starter" checked onchange="calc()">
-            <label for="startMode">התחלת הזנה<br>(עד 1.5 ג'/ק"ג)</label>
-            <input type="radio" name="calcMode" id="weanMode" value="weaning" onchange="calc()">
-            <label for="weanMode">גמילה / מלאה<br>(עד 3 ג'/ק"ג)</label>
-        </div>
-
-        <div class="input-card">
-            <div class="input-row">
-                <div class="step-title" style="margin:0;"><div class="step-num">1</div><div class="step-text">משקל המטופל (ק"ג)</div></div>
-                <input type="number" id="w" class="weight-input" min="0.1" step="0.1" oninput="calc()">
+        <div class="settings-panel">
+            <div class="setting-item">
+                <label>שעות תקן לחודש:</label>
+                <input type="number" id="monthly-target" min="0" placeholder="הזיני...">
             </div>
-        </div>
-        <div class="input-card">
-            <div class="step-title"><div class="step-num">2</div><div class="step-text">הגדרת שקית הזנה</div></div>
-            <select id="bag" onchange="updateBagColor(); calc();" style="margin-bottom: 12px;">
-                <option value="" disabled selected>בחירת שקית סטנדרטית...</option>
-                <option value="300-15" class="dex-15" data-kcal="189.9" data-vol="300">🔴 300ml 15%DEX</option>
-                <option value="500-12.5" class="dex-12-5" data-kcal="253" data-vol="500">🟢 500ml 12.5%DEX</option>
-                <option value="500-15" class="dex-15" data-kcal="316.5" data-vol="500">🔴 500ml 15%DEX</option>
-                <option value="1000-10" class="dex-10" data-kcal="442" data-vol="1000">🔵 1000ml 10%DEX</option>
-                <option value="1500-10" class="dex-10" data-kcal="673" data-vol="1500">🔵 1500ml 10%DEX</option>
-                <option value="1500-15" class="dex-15" data-kcal="929" data-vol="1500">🔴 1500ml 15%DEX</option>
-                <option value="2000-10" class="dex-10" data-kcal="923.4" data-vol="2000">🔵 2000ml 10%DEX</option>
-                <option value="2000-15" class="dex-15" data-kcal="1265.4" data-vol="2000">🔴 2000ml 15%DEX</option>
-            </select>
-            <div class="input-row">
-                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">קצב שקית (מ"ל/שעה)</span>
-                <div class="rate-control">
-                    <button class="step-btn" onclick="stepRate(-1)">−</button>
-                    <input type="number" id="rBag" class="rate-input" min="0" step="1" oninput="calc()">
-                    <button class="step-btn" onclick="stepRate(1)">+</button>
-                </div>
+            <div class="setting-item">
+                <label>אחוז משרה (%):</label>
+                <input type="number" id="job-pct" min="0" max="100">
             </div>
-            <div id="fluidInfo" class="fluid-info-inline"></div>
-        </div>
-
-        <div class="input-card">
-            <div class="step-title"><div class="step-num">3</div><div class="step-text">🥑 בחירת תמיסת שומן</div></div>
-            <select id="fType" onchange="toggleCustomOmg(); calc();">
-                <option value="" disabled selected>בחר סוג שומן...</option>
-                <option value="6">מזרק SMOF + Vitamines</option>
-                <option value="10">Omegaven (10%)</option>
-                <option value="CUSTOM">מזרק אומגוון עם ויטמינים (הזנה ידנית)</option>
-                <option value="5">בקבוק SMOF / Lipofundin (20%)</option>
-            </select>
-
-            <div id="customOmgPanel" class="custom-omg-card">
-                <div style="font-size: 0.85rem; font-weight: 800; color: #9a3412; margin-bottom: 10px;">📊 נתוני מזרק מהרוקחת:</div>
-                <div class="input-row" style="margin-bottom: 8px;">
-                    <span style="font-size: 0.8rem; font-weight: 600;">גרם אומגוון במזרק:</span>
-                    <input type="number" id="omgGrams" style="width: 70px; padding: 5px;" value="3" oninput="calc()">
-                </div>
-                <div class="input-row">
-                    <span style="font-size: 0.8rem; font-weight: 600;">סך מ"ל נוזל במזרק:</span>
-                    <input type="number" id="omgVol" style="width: 70px; padding: 5px;" value="40" oninput="calc()">
-                </div>
+            <div class="setting-item">
+                <label>שעות שבועיות:</label>
+                <input type="number" id="weekly-hours" min="0">
             </div>
-        </div>
-
-        <div id="resCard" class="result-card">
-            <div id="resRate" class="result-val">0.0</div>
-            <div style="font-weight:800; font-size:1rem; color:#059669;">מ"ל / שעה</div>
-            <div id="syringeNote" class="syringe-badge" style="display:none;"></div>
-            <div id="reasonTag" class="reason-box"></div>
-            <div id="resMeta" class="result-meta"></div>
-            <div id="pharmacyWarning" class="pharmacist-warning">⚠️ <b>שים/י לב:</b> באומגוון עם ויטמינים - יש להתייעץ עם הרוקחת.</div>
+            <div class="setting-item">
+                <label>ערך יום שעתי:</label>
+                <input type="time" id="daily-value">
+            </div>
         </div>
     </div>
-    <div class="footer">כל הזכויות שמורות לענת מסלנסקי - דיאטנית קלינית.</div>
+
+    <div class="compact-dashboard">
+        <div class="dashboard">
+            <div class="stat-card">
+                <h3>יעד חודשי</h3>
+                <div class="value" id="stat-target">0:00</div>
+            </div>
+            <div class="stat-card">
+                <h3>סך בוצע</h3>
+                <div class="value" id="stat-worked">0:00</div>
+            </div>
+            <div class="stat-card">
+                <h3>שעות חסרות</h3>
+                <div class="value" id="stat-remaining">0:00</div>
+            </div>
+            <div class="stat-card overtime-card">
+                <h3>שעות נוספות</h3>
+                <div class="value" id="stat-overtime">0:00</div>
+            </div>
+            <div class="stat-card vacation-card">
+                <h3>חופש להצהרה</h3>
+                <div class="value" id="stat-vacation-days">0 ימים</div>
+                <div class="sub-value" id="stat-vacation-hours">אין חוסר</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar-container"></div>
+
+    <div class="bottom-section">
+        <div class="notes-section">
+            <h3>צ'ק ליסט לסוף חודש (תזכורות)</h3>
+            <div class="add-task">
+                <input type="text" id="new-task-input" placeholder="הקלידי משימה חדשה..." onkeypress="if(event.key === 'Enter') addTask()">
+                <button onclick="addTask()">הוסף משימה</button>
+            </div>
+            <ul class="task-list" id="task-list"></ul>
+        </div>
+
+        <button class="whatsapp-btn" onclick="sendWhatsAppReport()">
+            🟢 שליחת דו"ח מסכם בוואטסאפ
+        </button>
+    </div>
+</div>
+
+<div class="footer-credits">
+    &copy; כל הזכויות שמורות לענת מסלנסקי - מרכז שניידר
 </div>
 
 <script>
-function stepRate(val) {
-    const r = document.getElementById('rBag');
-    let current = parseInt(r.value) || 0;
-    r.value = Math.max(0, current + val);
-    calc();
-}
-
-function updateBagColor() {
-    const b = document.getElementById('bag');
-    const s = b.options[b.selectedIndex];
-    if(!s.value) return;
-    b.style.color = s.classList.contains('dex-10') ? '#3b82f6' : s.classList.contains('dex-12-5') ? '#10b981' : s.classList.contains('dex-15') ? '#ef4444' : '';
-    b.style.fontWeight = 'bold';
-}
-
-function toggleCustomOmg() {
-    const fType = document.getElementById('fType').value;
-    document.getElementById('customOmgPanel').style.display = (fType === 'CUSTOM') ? 'block' : 'none';
-}
-
-function calc() {
-    const w = parseFloat(document.getElementById('w').value);
-    const b = document.getElementById('bag');
-    const r = parseFloat(document.getElementById('rBag').value);
-    const fSelection = document.getElementById('fType').value;
-    const c = document.getElementById('resCard');
-    const p = document.getElementById('pharmacyWarning');
-    const sn = document.getElementById('syringeNote');
-    const fi = document.getElementById('fluidInfo');
-    const isWeaning = document.getElementById('weanMode').checked;
+    let currentDate = new Date();
+    const maxYear = 2026;
+    const maxMonth = 11; 
     
-    if (w > 0 && !isNaN(r)) {
-        const bagFluidPerKg = (r * 24) / w;
-        fi.innerText = `💧 מנפח השקית בלבד: ${bagFluidPerKg.toFixed(1)} מ"ל/ק"ג ליממה`;
-        fi.style.display = 'block';
-    } else {
-        fi.style.display = 'none';
+    let workData = JSON.parse(localStorage.getItem('workHoursData')) || {};
+    let editModes = {}; 
+
+    // אתחול הגדרות גלובליות אם לא קיימות
+    if (!workData.settings) {
+        workData.settings = {
+            jobPct: 100,
+            weeklyHours: 40,
+            dailyValue: '08:00'
+        };
     }
 
-    if (!w || w <= 0 || !b.value || isNaN(r) || r < 0 || !fSelection) { c.style.display = 'none'; return; }
-    c.style.display = 'block';
+    const monthDisplay = document.getElementById('current-month-display');
+    const calendarContainer = document.getElementById('calendar-container');
     
-    let fRatio = 0;
-    const isOmegavenStandard = (fSelection === '10');
-    const isOmegavenCustom = (fSelection === 'CUSTOM');
-    const isSyringeSMOF = (fSelection === '6');
+    const targetInput = document.getElementById('monthly-target');
+    const jobPctInput = document.getElementById('job-pct');
+    const weeklyHoursInput = document.getElementById('weekly-hours');
+    const dailyValueInput = document.getElementById('daily-value');
 
-    if (isOmegavenCustom) {
-        const omgGrams = parseFloat(document.getElementById('omgGrams').value) || 1;
-        const omgVol = parseFloat(document.getElementById('omgVol').value) || 1;
-        fRatio = omgVol / omgGrams;
-    } else {
-        fRatio = parseFloat(fSelection);
+    function init() {
+        const now = new Date();
+        const todayName = new Intl.DateTimeFormat('he-IL', { weekday: 'long', day: 'numeric', month: 'long' }).format(now);
+        document.getElementById('quick-punch-title').textContent = `החתמה מהירה (${todayName})`;
+
+        setDailyGreeting(now.getDay());
+
+        const inputs = [targetInput, jobPctInput, weeklyHoursInput, dailyValueInput];
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                saveSettings();
+                updateDashboard();
+            });
+        });
+        
+        document.getElementById('prev-month').addEventListener('click', () => changeMonth(-1));
+        document.getElementById('next-month').addEventListener('click', () => changeMonth(1));
+        
+        renderMonth();
+        renderTasks();
     }
 
-    const o = b.options[b.selectedIndex];
-    const k = (r * 24) * (parseFloat(o.dataset.kcal) / parseFloat(o.dataset.vol));
-    
-    let weightLimit = (isOmegavenStandard || isOmegavenCustom) ? 1.0 : (isWeaning ? 3.0 : 1.5);
+    function setDailyGreeting(dayOfWeek) {
+        let message = "";
+        const generalMessages = [
+            "לא לשכוח 7+",
+            "צדיקה, בחרת ימי הדרכה לסטאז'?",
+            "יום קסום ✨",
+            "הכי בבית - שניידר 🏥",
+            "לא לשכוח - אפשר להצהיר על ימי ראשון כיום אקדמי",
+            "אל תשכחו לשתות מים, הסנדלר הולך יחף! 💧",
+            "נעזרתן היום במחשבון ה-TPN? 💻",
+            "לא לשכוח לעדכן שעות איסוף נתונים ומחקר 📊",
+            "מישהי פה קראה כבר את הנחיות ESPEN המעודכנות? 📚",
+            "צוות של אלופות! שיהיה יום פורה 💪",
+            "לא לשכוח לנשום עמוק בין מטופל למטופל 🧘‍♀️"
+        ];
 
-    const lw = w * weightLimit;
-    const lp = ((4/6) * k) / 10;
-    
-    let fg = 0, t = document.getElementById('reasonTag');
-
-    if ((isOmegavenStandard || isOmegavenCustom) && (10.0 <= lw && 10.0 <= lp)) {
-        fg = 10.0;
-        t.innerHTML = "🚫 הוגבל לנפח מקסימלי (100 מ\"ל אומגוון)";
-        t.className = "reason-box reason-vol";
-    } else if (lw <= lp) { 
-        fg = lw; 
-        t.innerHTML = `⚖️ הוגבל לפי משקל (${weightLimit} ג'/ק\"ג)`; 
-        t.className = "reason-box reason-weight"; 
-    } else { 
-        fg = lp; 
-        t.innerHTML = "🔥 הוגבל לפי קלוריות (40% מהסך)"; 
-        t.className = "reason-box reason-perc"; 
-    }
-    
-    const fRateRaw = (fg * fRatio) / 24;
-    const fRateRounded = Math.floor(fRateRaw * 10) / 10; 
-    document.getElementById('resRate').innerText = fRateRounded.toFixed(1);
-
-    if (isSyringeSMOF) {
-        const totalVolSyringe = fg * fRatio;
-        sn.style.display = "inline-block";
-        if (totalVolSyringe <= 45) {
-            sn.innerText = `💉 לשימוש במזרק 45 מ"ל`;
-            sn.style.background = "#334155";
-        } else {
-            sn.innerText = `💉 לשימוש במזרק 60 מ"ל`;
-            sn.style.background = "#0284c7";
+        if (dayOfWeek === 0) { 
+            message = "שביזות יום א' שלום ☕";
+        } else if (dayOfWeek === 2) { 
+            message = "פעמיים כי טוב 🌻";
+        } else if (dayOfWeek === 4) { 
+            message = "חמישי שמח! 🎉";
+        } else if (dayOfWeek === 5 || dayOfWeek === 6) { 
+            message = 'סופ"ש נעים ורגוע 🌸';
+        } else { 
+            const randomIndex = Math.floor(Math.random() * generalMessages.length);
+            message = generalMessages[randomIndex];
         }
-    } else {
-        sn.style.display = "none";
+
+        const greetingHtml = `
+            <span class="greeting-main">יום טוב ועבודה נעימה!</span>
+            <span class="greeting-sub">${message}</span>
+        `;
+        document.getElementById('daily-greeting').innerHTML = greetingHtml;
     }
 
-    document.getElementById('resMeta').innerHTML = `סה"כ שומן יומי: <b>${fg.toFixed(1)} גרם</b> (${(fg*fRatio).toFixed(0)} מ"ל)${isOmegavenCustom ? '<br>יחס דילול: 1 ג\' : ' + fRatio.toFixed(1) + ' מ"ל' : ''}<br>יחס שומן למשקל: <b>${(fg/w).toFixed(2)} ג'/ק"ג</b>`;
-    
-    p.style.display = (isOmegavenStandard || isOmegavenCustom) ? 'block' : 'none';
-}
+    function changeMonth(delta) {
+        currentDate.setMonth(currentDate.getMonth() + delta);
+        editModes = {}; 
+        renderMonth();
+        renderTasks();
+    }
+
+    function getMonthKey() {
+        return `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function quickPunch(field) {
+        const now = new Date();
+        const realYear = now.getFullYear();
+        const realMonth = now.getMonth();
+        const todayDate = now.getDate();
+        
+        currentDate = new Date(realYear, realMonth, 1);
+        editModes = {};
+        
+        const key = getMonthKey();
+        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key].days[todayDate]) workData[key].days[todayDate] = {};
+        
+        if(workData[key].days[todayDate].type === 'manual') {
+            workData[key].days[todayDate].type = 'work';
+            workData[key].days[todayDate].isManualMode = false;
+        } else if (!workData[key].days[todayDate].type) {
+            workData[key].days[todayDate].type = 'work';
+        }
+        
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        
+        renderMonth(); 
+        setTimeNow(todayDate, field); 
+        
+        setTimeout(() => {
+            const todayRow = document.getElementById(`row-${todayDate}`);
+            if(todayRow) {
+                todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                todayRow.style.backgroundColor = '#e8f6f3';
+                setTimeout(() => {
+                    todayRow.style.backgroundColor = '';
+                }, 1500);
+            }
+        }, 100);
+    }
+
+    function saveSettings() {
+        const key = getMonthKey();
+        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        
+        // שמירת שעות התקן הייחודיות לחודש
+        workData[key].target = targetInput.value;
+        
+        // שמירת ההגדרות הגלובליות שייגררו לכל חודש
+        workData.settings.jobPct = jobPctInput.value;
+        workData.settings.weeklyHours = weeklyHoursInput.value;
+        workData.settings.dailyValue = dailyValueInput.value;
+        
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        renderMonth(); 
+    }
+
+    function saveData(day, field, value) {
+        const key = getMonthKey();
+        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key].days[day]) workData[key].days[day] = {};
+        
+        workData[key].days[day][field] = value;
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        
+        if (field === 'type') {
+            if(value !== 'work') workData[key].days[day].isManualMode = false;
+            renderMonth(); 
+        } else {
+            updateDashboard();
+        }
+    }
+
+    function setTimeNow(day, field) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}`;
+        saveData(day, field, timeString);
+        renderMonth(); 
+    }
+
+    function toggleEditMode(day) {
+        editModes[day] = !editModes[day];
+        renderMonth(); 
+    }
+
+    function toggleManualMode(day) {
+        const key = getMonthKey();
+        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key].days[day]) workData[key].days[day] = {};
+        
+        workData[key].days[day].isManualMode = !workData[key].days[day].isManualMode;
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        renderMonth();
+    }
+
+    function addTask() {
+        const input = document.getElementById('new-task-input');
+        const text = input.value.trim();
+        if(!text) return;
+        
+        const key = getMonthKey();
+        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key].tasks) workData[key].tasks = [];
+        
+        workData[key].tasks.push({ text: text, done: false });
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        
+        input.value = '';
+        renderTasks();
+    }
+
+    function toggleTask(index) {
+        const key = getMonthKey();
+        workData[key].tasks[index].done = !workData[key].tasks[index].done;
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        renderTasks();
+    }
+
+    function deleteTask(index) {
+        const key = getMonthKey();
+        workData[key].tasks.splice(index, 1);
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        renderTasks();
+    }
+
+    function renderTasks() {
+        const key = getMonthKey();
+        const tasks = (workData[key] && workData[key].tasks) ? workData[key].tasks : [];
+        const list = document.getElementById('task-list');
+        list.innerHTML = '';
+        
+        tasks.forEach((task, index) => {
+            list.innerHTML += `
+                <li class="task-item ${task.done ? 'done' : ''}">
+                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})">
+                    <span>${task.text}</span>
+                    <button class="delete-btn" onclick="deleteTask(${index})">מחק</button>
+                </li>
+            `;
+        });
+    }
+
+    function formatHours(decimalHours) {
+        if (decimalHours <= 0) return "0:00";
+        const hours = Math.floor(decimalHours);
+        const minutes = Math.round((decimalHours - hours) * 60);
+        return `${hours}:${String(minutes).padStart(2, '0')}`;
+    }
+
+    function getDailyValueDecimal() {
+        let val = dailyValueInput.value;
+        if (!val) return 0;
+        if (val.includes(':')) {
+            const parts = val.split(':');
+            return parseInt(parts[0]) + (parseInt(parts[1]) / 60);
+        }
+        return parseFloat(val) || 0;
+    }
+
+    function renderMonth() {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        document.getElementById('next-month').disabled = (year >= maxYear && month >= maxMonth);
+        monthDisplay.textContent = new Intl.DateTimeFormat('he-IL', { month: 'long', year: 'numeric' }).format(currentDate);
+        
+        const key = getMonthKey();
+        const monthData = workData[key] || { days: {}, tasks: [] };
+        
+        // יעד חודשי ייחודי לחודש הנוכחי בלבד
+        targetInput.value = monthData.target !== undefined ? monthData.target : '';
+        
+        // שליפת ההגדרות הגלובליות שייגררו לכל חודש
+        jobPctInput.value = workData.settings.jobPct || 100;
+        weeklyHoursInput.value = workData.settings.weeklyHours || 40;
+        
+        let storedDv = workData.settings.dailyValue || '08:00';
+        if (!storedDv.includes(':')) {
+            storedDv = formatHours(parseFloat(storedDv));
+            if (storedDv.length < 5) storedDv = '0' + storedDv; 
+        }
+        dailyValueInput.value = storedDv;
+
+        calendarContainer.innerHTML = '';
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const date = new Date(year, month, i);
+            const dayOfWeek = date.getDay();
+            const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
+            const dayName = new Intl.DateTimeFormat('he-IL', { weekday: 'long' }).format(date);
+            
+            const dayData = monthData.days[i] || {};
+            const isEditing = editModes[i] || false;
+            
+            let dayType = dayData.type || 'work';
+            if (dayType === 'manual') {
+                dayType = 'work';
+                dayData.isManualMode = true;
+            }
+            
+            const isManualView = dayData.isManualMode || false;
+            
+            const row = document.createElement('div');
+            row.className = `day-row ${isWeekend ? 'weekend' : ''}`;
+            row.id = `row-${i}`; 
+            
+            let inputsHtml = '';
+            
+            if (isWeekend) {
+                const isChecked = dayData.kitchenDuty ? 'checked' : '';
+                inputsHtml = `
+                    <div class="inputs-group">
+                        <label class="kitchen-duty">
+                            <input type="checkbox" onchange="saveData(${i}, 'kitchenDuty', this.checked)" ${isChecked}>
+                            תורנות מטבח (+ שעה 1)
+                        </label>
+                    </div>
+                `;
+            } else {
+                const timeIn = dayData.in || '';
+                const timeOut = dayData.out || '';
+                const manualHours = dayData.manualHours || '';
+                
+                let timeControlsHtml = '';
+                
+                if (dayType === 'work') {
+                    if (isManualView) {
+                        timeControlsHtml = `
+                            <div class="time-inputs">
+                                <label style="font-weight:bold; color:var(--primary);">סה"כ יומי: 
+                                    <input type="time" value="${manualHours}" onchange="saveData(${i}, 'manualHours', this.value)">
+                                </label>
+                                <button onclick="toggleManualMode(${i})" class="edit-btn" style="background:#7f8c8d;" title="חזרה לשעות כניסה/יציאה">🔙 חזור</button>
+                            </div>
+                        `;
+                    } else if (isEditing) {
+                        timeControlsHtml = `
+                            <div class="time-inputs">
+                                <label>כניסה: <input type="time" value="${timeIn}" onchange="saveData(${i}, 'in', this.value)"></label>
+                                <label>יציאה: <input type="time" value="${timeOut}" onchange="saveData(${i}, 'out', this.value)"></label>
+                                <button onclick="toggleEditMode(${i})" class="save-btn">שמור</button>
+                            </div>
+                        `;
+                    } else {
+                        timeControlsHtml = `
+                            <div class="time-inputs">
+                                <div class="time-block">
+                                    <button onclick="setTimeNow(${i}, 'in')" class="punch-btn">כניסה</button>
+                                    <span class="time-display">${timeIn || '--:--'}</span>
+                                </div>
+                                <div class="time-block">
+                                    <button onclick="setTimeNow(${i}, 'out')" class="punch-btn btn-out">יציאה</button>
+                                    <span class="time-display">${timeOut || '--:--'}</span>
+                                </div>
+                                <button onclick="toggleEditMode(${i})" class="edit-btn" title="עריכת כניסה/יציאה ידנית">✎</button>
+                                <button onclick="toggleManualMode(${i})" class="edit-btn manual-btn" title="הזנת סה״כ שעות">⏳ סה"כ ידני</button>
+                            </div>
+                        `;
+                    }
+                } else if (dayType === 'holiday') {
+                    timeControlsHtml = `<span style="color: #e74c3c; font-weight: bold;">לא מחושב. התקן הופחת.</span>`;
+                } else if (dayType === 'vacation' || dayType === 'training' || dayType === 'eve' || dayType === 'chol_hamoed') {
+                    timeControlsHtml = `<span style="color:var(--secondary); font-size:14px;">השעות מחושבות אוטומטית</span>`;
+                }
+                
+                inputsHtml = `
+                    <div class="inputs-group">
+                        <select onchange="saveData(${i}, 'type', this.value)">
+                            <option value="work" ${dayType === 'work' ? 'selected' : ''}>עבודה רגילה</option>
+                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>יום חופש</option>
+                            <option value="training" ${dayType === 'training' ? 'selected' : ''}>יום השתלמות</option>
+                            <option value="eve" ${dayType === 'eve' ? 'selected' : ''}>ערב חג (1/2 יום)</option>
+                            <option value="chol_hamoed" ${dayType === 'chol_hamoed' ? 'selected' : ''}>חוה"מ (3/5 יום)</option>
+                            <option value="holiday" ${dayType === 'holiday' ? 'selected' : ''}>חג / לא לחישוב</option>
+                        </select>
+                        ${timeControlsHtml}
+                        <div class="daily-total" id="total-${i}">0:00</div>
+                    </div>
+                `;
+            }
+
+            row.innerHTML = `
+                <div class="day-info">${i} ב${new Intl.DateTimeFormat('he-IL', { month: 'short' }).format(date)}, ${dayName}</div>
+                ${inputsHtml}
+            `;
+            calendarContainer.appendChild(row);
+
+            if (dayOfWeek === 6 || i === daysInMonth) {
+                const summaryRow = document.createElement('div');
+                summaryRow.className = 'week-summary';
+                summaryRow.innerHTML = `
+                    <div>סיכום שבוע:</div>
+                    <div>בוצעו: <span id="week-worked-${i}" style="color:var(--accent);font-size:18px;">0:00</span> / יעד: <span id="week-target-${i}">0:00</span></div>
+                `;
+                calendarContainer.appendChild(summaryRow);
+            }
+        }
+        updateDashboard();
+    }
+
+    function calculateTimeDiff(timeIn, timeOut) {
+        if (!timeIn || !timeOut) return 0;
+        const [inHours, inMins] = timeIn.split(':').map(Number);
+        const [outHours, outMins] = timeOut.split(':').map(Number);
+        
+        let inDate = new Date(2000, 0, 1, inHours, inMins);
+        let outDate = new Date(2000, 0, 1, outHours, outMins);
+        
+        if (outDate < inDate) outDate.setDate(outDate.getDate() + 1);
+        
+        return (outDate - inDate) / (1000 * 60 * 60);
+    }
+
+    function updateDashboard() {
+        const key = getMonthKey();
+        const monthData = workData[key] || { days: {} };
+        const baseMonthlyTarget = parseFloat(targetInput.value) || 0;
+        const dailyValueDecimal = getDailyValueDecimal();
+        const weeklyHoursAvg = parseFloat(weeklyHoursInput.value) || 40;
+        const dailyAvgForTarget = weeklyHoursAvg / 5; 
+        
+        let adjustedMonthlyTarget = baseMonthlyTarget;
+        let totalDecimalWorked = 0;
+        
+        let weeklyWorkedCounter = 0;
+        let standardDaysInWeek = 0;
+        let holidaysInWeek = 0;
+
+        const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayData = monthData.days[i] || {};
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+            const dayOfWeek = date.getDay();
+            const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
+            
+            let dailyHours = 0;
+            const totalEl = document.getElementById(`total-${i}`);
+
+            if (isWeekend) {
+                if (dayData.kitchenDuty) dailyHours = 1;
+            } else {
+                let dayType = dayData.type || 'work';
+                if (dayType === 'manual') dayType = 'work'; 
+                const isManualView = dayData.isManualMode || false;
+
+                standardDaysInWeek++;
+                
+                if (dayType === 'holiday') {
+                    holidaysInWeek++;
+                    adjustedMonthlyTarget -= dailyValueDecimal; 
+                    if (totalEl) totalEl.textContent = "0:00";
+                }
+                else if (dayType === 'vacation' || dayType === 'training') {
+                    dailyHours = dailyValueDecimal;
+                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`;
+                }
+                else if (dayType === 'eve') {
+                    dailyHours = dailyValueDecimal * 0.5;
+                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`;
+                }
+                else if (dayType === 'chol_hamoed') {
+                    dailyHours = dailyValueDecimal * 0.6; 
+                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`;
+                } 
+                else if (dayType === 'work') {
+                    if (isManualView) {
+                        if (dayData.manualHours) {
+                            const parts = dayData.manualHours.split(':');
+                            dailyHours = parseInt(parts[0]) + (parseInt(parts[1]) / 60);
+                        }
+                    } else {
+                        dailyHours = calculateTimeDiff(dayData.in, dayData.out);
+                    }
+                    if (totalEl) totalEl.textContent = formatHours(dailyHours);
+                }
+            }
+            
+            totalDecimalWorked += dailyHours;
+            weeklyWorkedCounter += dailyHours;
+
+            if (dayOfWeek === 6 || i === daysInMonth) {
+                const weekTargetDecimal = Math.max(0, (standardDaysInWeek - holidaysInWeek) * dailyAvgForTarget);
+                
+                const workedEl = document.getElementById(`week-worked-${i}`);
+                const targetEl = document.getElementById(`week-target-${i}`);
+                if(workedEl) workedEl.textContent = formatHours(weeklyWorkedCounter);
+                if(targetEl) targetEl.textContent = formatHours(weekTargetDecimal);
+
+                weeklyWorkedCounter = 0;
+                standardDaysInWeek = 0;
+                holidaysInWeek = 0;
+            }
+        }
+
+        const remainingDecimal = Math.max(0, adjustedMonthlyTarget - totalDecimalWorked);
+        const overtimeDecimal = Math.max(0, totalDecimalWorked - adjustedMonthlyTarget);
+        
+        document.getElementById('stat-target').textContent = formatHours(adjustedMonthlyTarget);
+        document.getElementById('stat-worked').textContent = formatHours(totalDecimalWorked);
+        document.getElementById('stat-remaining').textContent = formatHours(remainingDecimal);
+        document.getElementById('stat-overtime').textContent = formatHours(overtimeDecimal);
+
+        const vacDaysEl = document.getElementById('stat-vacation-days');
+        const vacHoursEl = document.getElementById('stat-vacation-hours');
+        
+        if (remainingDecimal > 0 && dailyValueDecimal > 0) {
+            const daysToDeclare = Math.round(remainingDecimal / dailyValueDecimal);
+            vacDaysEl.textContent = `${daysToDeclare} ימים`;
+            vacHoursEl.textContent = `(השלמה ל-${formatHours(remainingDecimal)})`;
+        } else {
+            vacDaysEl.textContent = "0 ימים";
+            vacHoursEl.textContent = "אין חוסר";
+        }
+    }
+
+    function sendWhatsAppReport() {
+        const monthText = document.getElementById('current-month-display').innerText;
+        const target = document.getElementById('stat-target').innerText;
+        const worked = document.getElementById('stat-worked').innerText;
+        const remaining = document.getElementById('stat-remaining').innerText;
+        const overtime = document.getElementById('stat-overtime').innerText;
+        const vacDays = document.getElementById('stat-vacation-days').innerText;
+
+        let report = `*סיכום שעות עבודה - ${monthText}* 📊\n\n`;
+        report += `🎯 יעד חודשי מעודכן: ${target}\n`;
+        report += `✅ סך הכל בוצע: ${worked}\n`;
+
+        if (remaining !== "0:00") {
+            report += `⏳ שעות חסרות: ${remaining}\n`;
+            report += `🏖️ ימי חופש להצהרה: ${vacDays}\n`;
+        } else if (overtime !== "0:00") {
+            report += `🔥 שעות נוספות: ${overtime}\n`;
+        } else {
+            report += `✨ עמידה מדויקת ביעד!\n`;
+        }
+
+        report += `\nנשלח מתוך אפליקציית דיווח השעות 🍏`;
+
+        const encodedMessage = encodeURIComponent(report);
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    }
+
+    init();
 </script>
+
 </body>
 </html>
