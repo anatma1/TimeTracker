@@ -210,15 +210,12 @@
             font-size: 10px;
         }
 
-        .week-container {
+        .week-details {
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             overflow: hidden;
-        }
-        .week-days-wrapper {
-            background: #fff;
         }
         .week-summary-header {
             background: var(--primary);
@@ -232,7 +229,7 @@
             align-items: center;
         }
         .week-summary-header::after { content: '▼'; font-size: 10px; }
-        .week-days-wrapper[open] .week-summary-header::after { transform: rotate(180deg); }
+        .week-details[open] .week-summary-header::after { transform: rotate(180deg); }
 
         .day-row {
             display: flex;
@@ -384,7 +381,6 @@
             </div>
             
             <div class="bulk-action-area">
-                <!-- עדכון טקסט האופציה ל"לבחירה" כפי שביקשת -->
                 <label style="font-size:12px; font-weight:bold; color:var(--secondary);">ימי חופשי קבועים בשבוע (לבחירה):</label>
                 <div class="bulk-days-row">
                     <label class="bulk-day-checkbox"><input type="checkbox" class="bulk-day-cb" value="0"> א'</label>
@@ -619,6 +615,8 @@
         setTimeout(() => {
             const todayRow = document.getElementById(`row-${todayDate}`);
             if(todayRow) {
+                const detailsEl = todayRow.closest('details');
+                if(detailsEl) detailsEl.open = true;
                 todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }, 100);
@@ -642,7 +640,6 @@
         if (field === 'type') { renderMonth(); } else { updateDashboard(); }
     }
 
-    // פונקציות תוספת שבועית
     function saveWeeklyExtra(weekNum, value) {
         const key = getMonthKey();
         if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
@@ -724,12 +721,6 @@
         return `${hours}:${String(minutes).padStart(2, '0')}`;
     }
 
-    function getSystemDailyValueDecimal() {
-        const pct = parseInt(jobPctInput.value);
-        if (isNaN(pct) || pct <= 0) return 0;
-        return (8 * pct) / 100;
-    }
-
     function calculateTimeDiff(timeIn, timeOut) {
         if (!timeIn || !timeOut) return 0;
         const [inHours, inMins] = timeIn.split(':').map(Number);
@@ -740,6 +731,8 @@
     }
 
     function saveWeekState(weekNum, isOpen) { localStorage.setItem(getMonthKey() + `-w${weekNum}`, isOpen ? 'true' : 'false'); }
+
+    const todayObj = new Date();
 
     function renderMonth() {
         const year = currentDate.getFullYear(), month = currentDate.getMonth();
@@ -757,8 +750,7 @@
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         
         let weekNum = 1; 
-        let currentWeekContainer = null;
-        let currentDetailsWrapper = null;
+        let currentWeekDetails = null;
         let startDayOfWeek = 1;
 
         for (let i = 1; i <= daysInMonth; i++) {
@@ -766,28 +758,24 @@
             const dayName = new Intl.DateTimeFormat('he-IL', { weekday: 'short' }).format(date);
             const isToday = (date.getDate() === todayObj.getDate() && date.getMonth() === todayObj.getMonth() && date.getFullYear() === todayObj.getFullYear());
             
-            if (!currentWeekContainer || (dayOfWeek === 0 && i !== 1)) {
-                if (currentWeekContainer) { 
-                    appendWeekFooter(currentWeekContainer, weekNum - 1, monthData); 
-                    calendarContainer.appendChild(currentWeekContainer); 
+            if (!currentWeekDetails || (dayOfWeek === 0 && i !== 1)) {
+                if (currentWeekDetails) { 
+                    appendWeekFooter(currentWeekDetails, weekNum - 1, monthData); 
+                    calendarContainer.appendChild(currentWeekDetails); 
                 }
                 
                 startDayOfWeek = i;
-                currentWeekContainer = document.createElement('div');
-                currentWeekContainer.className = 'week-container';
-                
-                currentDetailsWrapper = document.createElement('details');
-                currentDetailsWrapper.className = 'week-days-wrapper';
-                currentDetailsWrapper.dataset.week = weekNum;
+                currentWeekDetails = document.createElement('details'); 
+                currentWeekDetails.className = 'week-details';
+                currentWeekDetails.dataset.week = weekNum;
                 
                 const savedState = localStorage.getItem(key + `-w${weekNum}`);
                 const isTodayWeek = (todayObj.getMonth() === month && todayObj.getFullYear() === year && i <= todayObj.getDate() && todayObj.getDate() < i + 7 - dayOfWeek);
                 if (savedState === 'true' || (savedState === null && (weekNum === 1 || isTodayWeek))) { 
-                    currentDetailsWrapper.open = true; 
+                    currentWeekDetails.open = true; 
                 }
-                currentDetailsWrapper.addEventListener('toggle', function() { saveWeekState(this.dataset.week, this.open); });
+                currentWeekDetails.addEventListener('toggle', function() { saveWeekState(this.dataset.week, this.open); });
                 
-                currentWeekContainer.appendChild(currentDetailsWrapper);
                 weekNum++;
             }
             
@@ -798,10 +786,10 @@
                 summary.className = 'week-summary-header';
                 summary.innerHTML = `<span>שבוע ${weekNum - 1} (${startDayOfWeek} עד ${endDayOfWeek} לחודש)</span><span id="header-week-total-${weekNum - 1}" style="font-size:12px; font-weight:normal;"></span>`;
                 
-                if (currentDetailsWrapper.firstChild) {
-                    currentDetailsWrapper.insertBefore(summary, currentDetailsWrapper.firstChild);
+                if (currentWeekDetails.firstChild) {
+                    currentWeekDetails.insertBefore(summary, currentWeekDetails.firstChild);
                 } else {
-                    currentDetailsWrapper.appendChild(summary);
+                    currentWeekDetails.appendChild(summary);
                 }
             }
             
@@ -878,11 +866,11 @@
                     </div>`;
             }
             row.innerHTML = `<div class="day-meta"><span>${i} לחודש</span> | <span>${dayName}</span></div>${inputsHtml}`;
-            currentDetailsWrapper.appendChild(row);
+            currentWeekDetails.appendChild(row);
         }
-        if (currentWeekContainer) { 
-            appendWeekFooter(currentWeekContainer, weekNum - 1, monthData); 
-            calendarContainer.appendChild(currentWeekContainer); 
+        if (currentWeekDetails) { 
+            appendWeekFooter(currentWeekDetails, weekNum - 1, monthData); 
+            calendarContainer.appendChild(currentWeekDetails); 
         }
         renderTasks(); 
         updateDashboard();
@@ -974,36 +962,6 @@
             vacDaysEl.textContent = `${daysToDeclare} ימים`; vacHoursEl.textContent = `(חוסר של ${formatHours(remainingDecimal)})`;
         } else { vacDaysEl.textContent = "0 ימים"; vacHoursEl.textContent = "אין חוסר"; }
         vacDeclaredEl.textContent = `ביומן: ${declaredVacationsCount} ימים`;
-    }
-
-    function sendWhatsAppReport() {
-        const key = getMonthKey();
-        const monthText = document.getElementById('current-month-display').innerText;
-        const target = document.getElementById('stat-target').innerText;
-        const worked = document.getElementById('stat-worked').innerText;
-        const remaining = document.getElementById('stat-remaining').innerText;
-        const overtime = document.getElementById('stat-overtime').innerText;
-        const vacDays = document.getElementById('stat-vacation-days').innerText;
-        const vacDeclared = document.getElementById('stat-vacation-declared').innerText;
-
-        let sickDaysCount = 0;
-        if (workData[key] && workData[key].days) {
-            for (let d in workData[key].days) {
-                if (workData[key].days[d].type === 'sick') sickDaysCount++;
-            }
-        }
-
-        let report = `*סיכום נוכחות - ${monthText}* 📊\n\n`;
-        report += `🎯 יעד חודשי: ${target}\n`;
-        report += `✅ סך בוצע: ${worked}\n`;
-        if (sickDaysCount > 0) report += `🤒 ימי מחלה מדווחים: ${sickDaysCount} ימים\n`;
-
-        if (remaining !== "0:00") {
-            report += `⏳ שעות חסרות: ${remaining}\n`; report += `🏖️ ימי חופש חסרים להצהרה: ${vacDays}\n`;
-        } else if (overtime !== "0:00") { report += `🔥 שעות נוספות: ${overtime}\n`; } 
-        else { report += `✨ עמידה מדויקת ביעד!\n`; }
-        report += `\n📅 ${vacDeclared}\n\nנשלח מיומן נוכחות - מרכז שניידר 🍏`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(report)}`, '_blank');
     }
 
     init();
