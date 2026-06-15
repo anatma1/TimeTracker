@@ -210,26 +210,32 @@
             font-size: 10px;
         }
 
-        .week-details {
+        /* בלוק שבועי משולב */
+        .week-container {
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             overflow: hidden;
+        }
+        
+        /* רכיב הקיפול לימים בלבד */
+        .week-days-wrapper {
+            background: #fff;
         }
         .week-summary-header {
             background: var(--primary);
             color: white;
-            padding: 5px 8px;
+            padding: 6px 10px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 13px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .week-summary-header::after { content: '▼'; font-size: 9px; }
-        .week-details[open] .week-summary-header::after { transform: rotate(180deg); }
+        .week-summary-header::after { content: '▼'; font-size: 10px; }
+        .week-days-wrapper[open] .week-summary-header::after { transform: rotate(180deg); }
 
         .day-row {
             display: flex;
@@ -238,7 +244,6 @@
             border-bottom: 1px solid var(--border);
             font-size: 13px;
         }
-        .day-row:last-child { border-bottom: none; }
         .day-row:nth-child(even) { background-color: #fdfdfd; }
         .day-row.weekend { background-color: #fffafd; }
         .day-row.today-highlight {
@@ -260,7 +265,7 @@
             gap: 6px;
             width: 100%;
         }
-        .inputs-group select { width: 105px; height: 26px; font-size: 13px; padding: 2px; }
+        .inputs-group select { width: 115px; height: 26px; font-size: 13px; padding: 2px; }
         .time-inputs { display: flex; gap: 4px; align-items: center; }
         .time-block {
             display: flex;
@@ -279,6 +284,7 @@
         .range-btn { background-color: #e67e22; color: white; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; height: 24px; cursor: pointer;}
         .daily-total { font-weight: bold; color: var(--accent); font-size: 14px; margin-right: auto;}
 
+        /* שורת סיכום שבועי מחוץ לקיפול - גלויה תמיד */
         .week-summary-footer {
             padding: 6px 10px;
             font-weight: bold;
@@ -391,7 +397,6 @@
                 <span class="calc-val" id="lbl-daily-value">06:24</span>
             </div>
             
-            <!-- אזור החלה גורפת עם תיבות סימון (Checkbox) לפי ימים -->
             <div class="bulk-action-area">
                 <label style="font-size:12px; font-weight:bold; color:var(--secondary);">ימי חופשי קבועים בשבוע:</label>
                 <div class="bulk-days-row">
@@ -503,7 +508,7 @@
     function setDailyGreeting(dayOfWeek) {
         let message = "";
         const generalMessages = [
-            "לא לשכוח 7+", "צדיקה, בחרת ימי הדרכה לסטאז'?", "יום קסום ✨", "הכי בבית - שניידר 🏥", 
+            "לא לשכוש 7+", "צדיקה, בחרת ימי הדרכה לסטאז'?", "יום קסום ✨", "הכי בבית - שניידר 🏥", 
             "אפשר להצהיר על ימי ראשון כיום אקדמי", "אל תשכחו לשתות מים! 💧", "נעזרתן היום במחשבון ה-TPN? 💻", 
             "לעדכן שעות איסוף נתונים ומחקר 📊", "צוות של אלופות! שיהיה יום פורה 💪", "לנשום עמוק בין מטופל למטופל 🧘‍♀️"
         ];
@@ -542,7 +547,6 @@
         } else { alert('אין נתונים רשומים בחודש זה שניתן לאפס.'); }
     }
 
-    // פונקציה חדשה להחלה גורפת של ימי חופשי קבועים לפי תיבות הסימון שסומנו (V)
     function applyBulkDaysOff() {
         const checkboxes = document.querySelectorAll('.bulk-day-cb');
         let selectedDays = [];
@@ -565,7 +569,6 @@
             const date = new Date(year, month, i);
             if (selectedDays.includes(date.getDay())) {
                 if (!workData[key].days[i]) workData[key].days[i] = {};
-                // מחיל רק על ימים "נקיים" ללא נתונים קודמים
                 if (!workData[key].days[i].in && !workData[key].days[i].out && !workData[key].days[i].manualHours) {
                     workData[key].days[i].type = 'day_off';
                     count++;
@@ -607,7 +610,7 @@
         
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         renderMonth();
-        alert(`הוחלו ${count} ימי חופש (הצהרה) בטווח הנבחר (ללא סופי שבוע).`);
+        alert(`הוחלו ${count} ימי חופש בטווח הנבחר (ללא סופי שבוע).`);
     }
 
     function quickPunch(field) {
@@ -624,8 +627,6 @@
         setTimeout(() => {
             const todayRow = document.getElementById(`row-${todayDate}`);
             if(todayRow) {
-                const detailsEl = todayRow.closest('details');
-                if(detailsEl) detailsEl.open = true;
                 todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }, 100);
@@ -734,15 +735,6 @@
         return (8 * (parseInt(jobPctSelect.value) || 100)) / 100;
     }
 
-    function calculateTimeDiff(timeIn, timeOut) {
-        if (!timeIn || !timeOut) return 0;
-        const [inHours, inMins] = timeIn.split(':').map(Number);
-        const [outHours, outMins] = timeOut.split(':').map(Number);
-        let inDate = new Date(2000, 0, 1, inHours, inMins), outDate = new Date(2000, 0, 1, outHours, outMins);
-        if (outDate < inDate) outDate.setDate(outDate.getDate() + 1);
-        return (outDate - inDate) / (1000 * 60 * 60);
-    }
-
     function saveWeekState(weekNum, isOpen) { localStorage.setItem(getMonthKey() + `-w${weekNum}`, isOpen ? 'true' : 'false'); }
 
     function renderMonth() {
@@ -761,26 +753,57 @@
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const todayObj = new Date();
         
-        let weekNum = 1; let currentWeekDetails = null;
+        let weekNum = 1; 
+        let currentWeekContainer = null;
+        let currentDetailsWrapper = null;
+        let startDayOfWeek = 1;
 
         for (let i = 1; i <= daysInMonth; i++) {
             const date = new Date(year, month, i), dayOfWeek = date.getDay();
             const dayName = new Intl.DateTimeFormat('he-IL', { weekday: 'short' }).format(date);
             const isToday = (date.getDate() === todayObj.getDate() && date.getMonth() === todayObj.getMonth() && date.getFullYear() === todayObj.getFullYear());
             
-            if (!currentWeekDetails || (dayOfWeek === 0 && i !== 1)) {
-                if (currentWeekDetails) { appendWeekFooter(currentWeekDetails, weekNum - 1, monthData); calendarContainer.appendChild(currentWeekDetails); }
-                currentWeekDetails = document.createElement('details'); currentWeekDetails.className = 'week-details';
+            // יצירת קופסת שבוע המכילה את הקיפול + את הסיכום הגלוי מלמטה
+            if (!currentWeekContainer || (dayOfWeek === 0 && i !== 1)) {
+                if (currentWeekContainer) { 
+                    appendWeekFooter(currentWeekContainer, weekNum - 1, monthData); 
+                    calendarContainer.appendChild(currentWeekContainer); 
+                }
+                
+                startDayOfWeek = i;
+                currentWeekContainer = document.createElement('div');
+                currentWeekContainer.className = 'week-container';
+                
+                // רכיב קיפול עבור הימים בלבד
+                currentDetailsWrapper = document.createElement('details');
+                currentDetailsWrapper.className = 'week-days-wrapper';
+                currentDetailsWrapper.dataset.week = weekNum;
                 
                 const savedState = localStorage.getItem(key + `-w${weekNum}`);
                 const isTodayWeek = (todayObj.getMonth() === month && todayObj.getFullYear() === year && i <= todayObj.getDate() && todayObj.getDate() < i + 7 - dayOfWeek);
-                if (savedState === 'true' || (savedState === null && (weekNum === 1 || isTodayWeek))) { currentWeekDetails.open = true; }
-                currentWeekDetails.dataset.week = weekNum;
-                currentWeekDetails.addEventListener('toggle', function() { saveWeekState(this.dataset.week, this.open); });
-
-                const summary = document.createElement('summary'); summary.className = 'week-summary-header';
-                summary.innerHTML = `<span>שבוע ${weekNum}</span><span id="header-week-total-${weekNum}" style="font-size:12px; font-weight:normal;"></span>`;
-                currentWeekDetails.appendChild(summary); weekNum++;
+                if (savedState === 'true' || (savedState === null && (weekNum === 1 || isTodayWeek))) { 
+                    currentDetailsWrapper.open = true; 
+                }
+                currentDetailsWrapper.addEventListener('toggle', function() { saveWeekState(this.dataset.week, this.open); });
+                
+                currentWeekContainer.appendChild(currentDetailsWrapper);
+                weekNum++;
+            }
+            
+            // עדכון כותרת הקיפול עם התאריכים המדויקים של אותו שבוע
+            let endDayOfWeek = i;
+            let nextDayDate = new Date(year, month, i + 1);
+            if (dayOfWeek === 6 || i === daysInMonth || nextDayDate.getDay() === 0) {
+                const summary = document.createElement('summary');
+                summary.className = 'week-summary-header';
+                summary.innerHTML = `<span>שבוע ${weekNum - 1} (${startDayOfWeek} עד ${endDayOfWeek} לחודש)</span><span id="header-week-total-${weekNum - 1}" style="font-size:11px; font-weight:normal;"></span>`;
+                
+                // הכנסת הכותרת בראש הקיפול
+                if (currentDetailsWrapper.firstChild) {
+                    currentDetailsWrapper.insertBefore(summary, currentDetailsWrapper.firstChild);
+                } else {
+                    currentDetailsWrapper.appendChild(summary);
+                }
             }
             
             const dayData = monthData.days[i] || {}, isEditing = editModes[i] || false;
@@ -826,15 +849,17 @@
                     }
                 } else if (dayType === 'day_off') { timeControlsHtml = `<span style="color:var(--secondary); font-size:11px; font-weight:bold;">יום חופשי (0 שעות)</span>`;
                 } else if (dayType === 'holiday') { timeControlsHtml = `<span style="color: #e74c3c; font-weight: bold; font-size:11px;">חג - תקן הופחת</span>`;
-                } else if (dayType === 'sick') { timeControlsHtml = `<span style="color:#b03a2e; font-weight:bold; font-size:11px;">יום מחלה (מחושב) 🩺</span>`;
+                } else if (dayType === 'sick') { timeControlsHtml = `<span style="color:#b03a2e; font-weight:bold; font-size:11px;">מחלה / הצהרה 🩺</span>`;
                 } else if (dayType === 'vacation') { 
                     const formattedMinDate = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                     timeControlsHtml = `
                         <div class="time-inputs" style="gap:4px;">
-                            <span style="color:var(--secondary); font-size:11px;">יום חופש 🌴</span>
+                            <span style="color:var(--secondary); font-size:11px;">חופש 🌴</span>
                             <label style="font-size:10px; color:#e67e22;">עד: <input type="date" id="range-date-${i}" min="${formattedMinDate}" style="height:22px; font-size:11px; width:100px; padding:1px;"></label>
                             <button onclick="applyVacationRange(${i})" class="range-btn">📅 החל</button>
                         </div>`;
+                } else if (dayType === 'eve') { timeControlsHtml = `<span style="color:var(--secondary); font-size:11px;">ערב חג (מחושב 1/2 יום)</span>`;
+                } else if (dayType === 'chol_hamoed') { timeControlsHtml = `<span style="color:var(--secondary); font-size:11px;">חוה"מ (מחושב 3/5 יום)</span>`;
                 } else { timeControlsHtml = `<span style="color:var(--secondary); font-size:11px;">מחושב אוטומטית</span>`; }
                 
                 inputsHtml = `
@@ -842,8 +867,8 @@
                         <select onchange="saveData(${i}, 'type', this.value)" style="height:22px; padding:1px;">
                             <option value="work" ${dayType === 'work' ? 'selected' : ''}>עבודה</option>
                             <option value="day_off" ${dayType === 'day_off' ? 'selected' : ''}>יום חופשי</option>
-                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>חופש (הצהרה) 🌴</option>
-                            <option value="sick" ${dayType === 'sick' ? 'selected' : ''}>מחלה (אישור) 🩺</option>
+                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>חופש 🌴</option>
+                            <option value="sick" ${dayType === 'sick' ? 'selected' : ''}>מחלה / הצהרה 🩺</option>
                             <option value="training" ${dayType === 'training' ? 'selected' : ''}>השתלמות</option>
                             <option value="eve" ${dayType === 'eve' ? 'selected' : ''}>ערב חג (1/2)</option>
                             <option value="chol_hamoed" ${dayType === 'chol_hamoed' ? 'selected' : ''}>חוה"מ (3/5)</option>
@@ -854,9 +879,12 @@
                     </div>`;
             }
             row.innerHTML = `<div class="day-meta"><span>${i} לחודש</span> | <span>${dayName}</span></div>${inputsHtml}`;
-            calendarContainer.appendChild(row);
+            currentDetailsWrapper.appendChild(row);
         }
-        if (currentWeekDetails) { appendWeekFooter(currentWeekDetails, weekNum - 1, monthData); calendarContainer.appendChild(currentWeekDetails); }
+        if (currentWeekContainer) { 
+            appendWeekFooter(currentWeekContainer, weekNum - 1, monthData); 
+            calendarContainer.appendChild(currentWeekContainer); 
+        }
         renderTasks(); 
         updateDashboard();
     }
@@ -872,16 +900,23 @@
         container.appendChild(footer);
     }
 
+    function calculateTimeDiff(timeIn, timeOut) {
+        if (!timeIn || !timeOut) return 0;
+        const [inHours, inMins] = timeIn.split(':').map(Number);
+        const [outHours, outMins] = timeOut.split(':').map(Number);
+        let inDate = new Date(2000, 0, 1, inHours, inMins), outDate = new Date(2000, 0, 1, outHours, outMins);
+        if (outDate < inDate) outDate.setDate(outDate.getDate() + 1);
+        return (outDate - inDate) / (1000 * 60 * 60);
+    }
+
     function updateDashboard() {
         const key = getMonthKey(); const monthData = workData[key] || { days: {}, weeks: {} };
         if(!monthData.weeks) monthData.weeks = {};
         const baseMonthlyTarget = parseFloat(targetInput.value) || 0;
         const dailyValueDecimal = getSystemDailyValueDecimal();
-        const weeklyHoursAvg = (40 * (parseInt(jobPctSelect.value) || 100)) / 100;
-        const dailyAvgForTarget = weeklyHoursAvg / 5; 
         
         let adjustedMonthlyTarget = baseMonthlyTarget, totalDecimalWorked = 0, declaredVacationsCount = 0;
-        let weeklyWorkedCounter = 0, standardDaysInWeek = 0, holidaysInWeek = 0, weekNum = 1;
+        let weeklyWorkedCounter = 0, weekTargetDecimal = 0, weekNum = 1;
         const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
         
         for (let i = 1; i <= daysInMonth; i++) {
@@ -889,20 +924,25 @@
             const dayOfWeek = date.getDay(), isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
             let dailyHours = 0; const totalEl = document.getElementById(`total-${i}`);
 
-            if (isWeekend) { if (dayData.kitchenDuty) dailyHours = 1; } 
-            else {
-                let dayType = dayData.type || 'work'; standardDaysInWeek++;
-                if (dayType === 'holiday') { holidaysInWeek++; adjustedMonthlyTarget -= dailyValueDecimal; if (totalEl) totalEl.textContent = "0:00"; }
+            if (isWeekend) { 
+                if (dayData.kitchenDuty) dailyHours = 1; 
+            } else {
+                let dayType = dayData.type || 'work';
+                
+                if (dayType === 'holiday') { adjustedMonthlyTarget -= dailyValueDecimal; if (totalEl) totalEl.textContent = "0:00"; }
                 else if (dayType === 'day_off') { dailyHours = 0; if (totalEl) totalEl.textContent = `0:00`; }
-                else if (dayType === 'vacation') { dailyHours = dailyValueDecimal; declaredVacationsCount++; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
-                else if (dayType === 'sick') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
-                else if (dayType === 'training') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
-                else if (dayType === 'eve') { dailyHours = dailyValueDecimal * 0.5; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
-                else if (dayType === 'chol_hamoed') { dailyHours = dailyValueDecimal * 0.6; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; } 
-                else if (dayType === 'work') {
-                    if (dayData.isManualMode) { if (dayData.manualHours) dailyHours = parseFloat(dayData.manualHours) || 0; } 
-                    else { dailyHours = calculateTimeDiff(dayData.in, dayData.out); }
-                    if (totalEl) totalEl.textContent = formatHours(dailyHours);
+                else {
+                    if (dayType === 'vacation') { dailyHours = dailyValueDecimal; declaredVacationsCount++; weekTargetDecimal += dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                    else if (dayType === 'sick') { dailyHours = dailyValueDecimal; weekTargetDecimal += dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                    else if (dayType === 'training') { dailyHours = dailyValueDecimal; weekTargetDecimal += dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                    else if (dayType === 'eve') { dailyHours = dailyValueDecimal * 0.5; weekTargetDecimal += dailyValueDecimal * 0.5; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                    else if (dayType === 'chol_hamoed') { dailyHours = dailyValueDecimal * 0.6; weekTargetDecimal += dailyValueDecimal * 0.6; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; } 
+                    else if (dayType === 'work') {
+                        weekTargetDecimal += dailyValueDecimal;
+                        if (dayData.isManualMode) { if (dayData.manualHours) dailyHours = parseFloat(dayData.manualHours) || 0; } 
+                        else { dailyHours = calculateTimeDiff(dayData.in, dayData.out); }
+                        if (totalEl) totalEl.textContent = formatHours(dailyHours);
+                    }
                 }
             }
             totalDecimalWorked += dailyHours; weeklyWorkedCounter += dailyHours;
@@ -911,7 +951,6 @@
                 let weekExtraDec = 0; if(monthData.weeks[weekNum] && monthData.weeks[weekNum].extraHours) { weekExtraDec = parseFloat(monthData.weeks[weekNum].extraHours) || 0; }
                 weeklyWorkedCounter += weekExtraDec; totalDecimalWorked += weekExtraDec;
 
-                const weekTargetDecimal = Math.max(0, (standardDaysInWeek - holidaysInWeek) * dailyAvgForTarget);
                 const targetEl = document.getElementById('week-target-' + weekNum);
                 const diffEl = document.getElementById('week-diff-' + weekNum);
                 const headerPreviewEl = document.getElementById('header-week-total-' + weekNum);
@@ -924,7 +963,7 @@
                     if (diffDecimal >= 0) { diffEl.textContent = `+${formatHours(diffDecimal)} נוספות`; diffEl.className = 'week-diff-badge plus'; } 
                     else { diffEl.textContent = `-${formatHours(Math.abs(diffDecimal))} חסרות`; diffEl.className = 'week-diff-badge minus'; }
                 }
-                weeklyWorkedCounter = 0; standardDaysInWeek = 0; holidaysInWeek = 0; weekNum++;
+                weeklyWorkedCounter = 0; weekTargetDecimal = 0; weekNum++;
             }
         }
 
@@ -945,6 +984,36 @@
             vacDaysEl.textContent = `${daysToDeclare} ימים`; vacHoursEl.textContent = `(חוסר של ${formatHours(remainingDecimal)})`;
         } else { vacDaysEl.textContent = "0 ימים"; vacHoursEl.textContent = "אין חוסר"; }
         vacDeclaredEl.textContent = `ביומן: ${declaredVacationsCount} ימים`;
+    }
+
+    function sendWhatsAppReport() {
+        const key = getMonthKey();
+        const monthText = document.getElementById('current-month-display').innerText;
+        const target = document.getElementById('stat-target').innerText;
+        const worked = document.getElementById('stat-worked').innerText;
+        const remaining = document.getElementById('stat-remaining').innerText;
+        const overtime = document.getElementById('stat-overtime').innerText;
+        const vacDays = document.getElementById('stat-vacation-days').innerText;
+        const vacDeclared = document.getElementById('stat-vacation-declared').innerText;
+
+        let sickDaysCount = 0;
+        if (workData[key] && workData[key].days) {
+            for (let d in workData[key].days) {
+                if (workData[key].days[d].type === 'sick') sickDaysCount++;
+            }
+        }
+
+        let report = `*סיכום נוכחות - ${monthText}* 📊\n\n`;
+        report += `🎯 יעד חודשי: ${target}\n`;
+        report += `✅ סך בוצע: ${worked}\n`;
+        if (sickDaysCount > 0) report += `🤒 ימי מחלה מדווחים: ${sickDaysCount} ימים\n`;
+
+        if (remaining !== "0:00") {
+            report += `⏳ שעות חסרות: ${remaining}\n`; report += `🏖️ ימי חופש חסרים להצהרה: ${vacDays}\n`;
+        } else if (overtime !== "0:00") { report += `🔥 שעות נוספות: ${overtime}\n`; } 
+        else { report += `✨ עמידה מדויקת ביעד!\n`; }
+        report += `\n📅 ${vacDeclared}\n\nנשלח מיומן נוכחות - מרכז שניידר 🍏`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(report)}`, '_blank');
     }
 
     init();
