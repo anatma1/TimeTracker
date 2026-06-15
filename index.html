@@ -358,7 +358,7 @@
                 </select>
             </div>
             <div class="setting-item">
-                <label>שבועיות:</label>
+                <label>שעות שבועיות:</label>
                 <span class="calc-val" id="lbl-weekly-hours">32</span>
             </div>
             <div class="setting-item">
@@ -540,7 +540,6 @@
         } else { alert('לא נמצאו ימים פנויים להגדרה או שהימים כבר מכילים שעות עבודה.'); }
     }
 
-    // פונקציה להחלת טווח ימי חופש רציפים
     function applyVacationRange(startDay) {
         const dateInput = document.getElementById(`range-date-${startDay}`);
         if (!dateInput || !dateInput.value) { alert('אנא בחרי תאריך סיום חופשה.'); return; }
@@ -555,7 +554,6 @@
             const checkDate = new Date(year, month, d);
             if (checkDate <= endDateObj) {
                 const dayOfWeek = checkDate.getDay();
-                // מדלג על סופ"שים (שישי ושבת)
                 if (dayOfWeek !== 5 && dayOfWeek !== 6) {
                     if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
                     if (!workData[key].days[d]) workData[key].days[d] = {};
@@ -641,7 +639,7 @@
         const key = getMonthKey();
         if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
         if (!workData[key].tasks) workData[key].tasks = [];
-        workData[key].tasks.push({ text: input.value.trim(), done: false });
+        workData[key].tasks.push({ text: input.value.trim(), done: false, userAdded: true });
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         input.value = ''; renderTasks();
     }
@@ -653,6 +651,28 @@
         const key = getMonthKey(); workData[key].tasks.splice(index, 1);
         localStorage.setItem('workHoursData', JSON.stringify(workData)); renderTasks();
     }
+    
+    // סריקת ימי מחלה ועדכון רשימת המשימות בהתאם
+    function syncSickLeaveTasks() {
+        const key = getMonthKey();
+        if (!workData[key]) return;
+        if (!workData[key].tasks) workData[key].tasks = [];
+        
+        // סינון המשימות האוטומטיות הישנות של המחלה
+        workData[key].tasks = workData[key].tasks.filter(t => !t.text.startsWith("אישור מחלה עבור"));
+        
+        // הוספת משימה עבור כל יום מחלה שנמצא
+        for (let day in workData[key].days) {
+            if (workData[key].days[day].type === 'sick') {
+                workData[key].tasks.push({
+                    text: `אישור מחלה עבור תאריך ${day} לחודש`,
+                    done: false,
+                    userAdded: false
+                });
+            }
+        }
+    }
+
     function renderTasks() {
         const key = getMonthKey();
         const tasks = (workData[key] && workData[key].tasks) ? workData[key].tasks : [];
@@ -660,7 +680,9 @@
         tasks.forEach((task, index) => {
             list.innerHTML += `<li class="task-item ${task.done ? 'done' : ''}">
                 <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})">
-                <span>${task.text}</span><button class="delete-btn" onclick="deleteTask(${index})">מחק</button></li>`;
+                <span>${task.text}</span>
+                <button class="delete-btn" onclick="deleteTask(${index})">מחק</button>
+            </li>`;
         });
     }
 
@@ -675,14 +697,6 @@
         return (8 * (parseInt(jobPctSelect.value) || 100)) / 100;
     }
 
-    function getDecimalFromTimeStr(timeStr) {
-        if(!timeStr) return 0;
-        if (typeof timeStr === 'string' && timeStr.includes(':')) {
-            const parts = timeStr.split(':'); return parseInt(parts[0]) + (parseInt(parts[1]) / 60);
-        }
-        return parseFloat(timeStr) || 0;
-    }
-
     function saveWeekState(weekNum, isOpen) { localStorage.setItem(getMonthKey() + `-w${weekNum}`, isOpen ? 'true' : 'false'); }
 
     function renderMonth() {
@@ -692,6 +706,7 @@
         monthDisplay.textContent = new Intl.DateTimeFormat('he-IL', { month: 'long', year: 'numeric' }).format(currentDate);
         
         const key = getMonthKey();
+        syncSickLeaveTasks(); // סנכרון המשימות לפני רינדור
         const monthData = workData[key] || { days: {}, weeks: {}, tasks: [] };
         if(!monthData.weeks) monthData.weeks = {};
         
@@ -765,8 +780,8 @@
                     }
                 } else if (dayType === 'day_off') { timeControlsHtml = `<span style="color:var(--secondary); font-size:11px; font-weight:bold;">יום חופשי (0 שעות)</span>`;
                 } else if (dayType === 'holiday') { timeControlsHtml = `<span style="color: #e74c3c; font-weight: bold; font-size:11px;">חג - תקן הופחת</span>`;
+                } else if (dayType === 'sick') { timeControlsHtml = `<span style="color:#b03a2e; font-weight:bold; font-size:11px;">יום מחלה (מחושב) 🩺</span>`;
                 } else if (dayType === 'vacation') { 
-                    // הוספת מנגנון בחירת טווח חופשה ישירות בשורה
                     const formattedMinDate = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                     timeControlsHtml = `
                         <div class="time-inputs" style="gap:4px;">
@@ -782,6 +797,7 @@
                             <option value="work" ${dayType === 'work' ? 'selected' : ''}>עבודה</option>
                             <option value="day_off" ${dayType === 'day_off' ? 'selected' : ''}>יום חופשי</option>
                             <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>חופש (הצהרה)</option>
+                            <option value="sick" ${dayType === 'sick' ? 'selected' : ''}>מחלה (אישור) 🩺</option>
                             <option value="training" ${dayType === 'training' ? 'selected' : ''}>השתלמות</option>
                             <option value="eve" ${dayType === 'eve' ? 'selected' : ''}>ערב חג (1/2)</option>
                             <option value="chol_hamoed" ${dayType === 'chol_hamoed' ? 'selected' : ''}>חוה"מ (3/5)</option>
@@ -792,9 +808,10 @@
                     </div>`;
             }
             row.innerHTML = `<div class="day-meta"><span>${i} לחודש</span> | <span>${dayName}</span></div>${inputsHtml}`;
-            currentWeekDetails.appendChild(row);
+            calendarContainer.appendChild(row);
         }
         if (currentWeekDetails) { appendWeekFooter(currentWeekDetails, weekNum - 1, monthData); calendarContainer.appendChild(currentWeekDetails); }
+        renderTasks(); // רינדור סופי של המשימות המעודכנות
         updateDashboard();
     }
 
@@ -832,6 +849,8 @@
                 if (dayType === 'holiday') { holidaysInWeek++; adjustedMonthlyTarget -= dailyValueDecimal; if (totalEl) totalEl.textContent = "0:00"; }
                 else if (dayType === 'day_off') { dailyHours = 0; if (totalEl) totalEl.textContent = `0:00`; }
                 else if (dayType === 'vacation') { dailyHours = dailyValueDecimal; declaredVacationsCount++; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                // יום מחלה מחושב בדיוק כמו ערך יום מערכת רגיל
+                else if (dayType === 'sick') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
                 else if (dayType === 'training') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
                 else if (dayType === 'eve') { dailyHours = dailyValueDecimal * 0.5; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
                 else if (dayType === 'chol_hamoed') { dailyHours = dailyValueDecimal * 0.6; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; } 
@@ -851,7 +870,6 @@
                 const targetEl = document.getElementById('week-target-' + weekNum);
                 const diffEl = document.getElementById('week-diff-' + weekNum);
                 const headerPreviewEl = document.getElementById('header-week-total-' + weekNum);
-                const footerContainer = document.getElementById(`week-footer-${weekNum}`);
                 
                 if(targetEl) targetEl.textContent = formatHours(weekTargetDecimal);
                 if(headerPreviewEl) headerPreviewEl.textContent = `(בוצע: ${formatHours(weeklyWorkedCounter)})`;
@@ -885,6 +903,7 @@
     }
 
     function sendWhatsAppReport() {
+        const key = getMonthKey();
         const monthText = document.getElementById('current-month-display').innerText;
         const target = document.getElementById('stat-target').innerText;
         const worked = document.getElementById('stat-worked').innerText;
@@ -893,14 +912,24 @@
         const vacDays = document.getElementById('stat-vacation-days').innerText;
         const vacDeclared = document.getElementById('stat-vacation-declared').innerText;
 
+        // ספירת ימי מחלה לצורך הכללה בדו"ח
+        let sickDaysCount = 0;
+        if (workData[key] && workData[key].days) {
+            for (let d in workData[key].days) {
+                if (workData[key].days[d].type === 'sick') sickDaysCount++;
+            }
+        }
+
         let report = `*סיכום נוכחות - ${monthText}* 📊\n\n`;
         report += `🎯 יעד חודשי: ${target}\n`;
         report += `✅ סך בוצע: ${worked}\n`;
+        if (sickDaysCount > 0) report += `🤒 ימי מחלה מדווחים: ${sickDaysCount} ימים\n`;
+
         if (remaining !== "0:00") {
             report += `⏳ שעות חסרות: ${remaining}\n`; report += `🏖️ ימי חופש חסרים להצהרה: ${vacDays}\n`;
         } else if (overtime !== "0:00") { report += `🔥 שעות נוספות: ${overtime}\n`; } 
         else { report += `✨ עמידה מדויקת ביעד!\n`; }
-        report += `\n📅 ${vacDeclared}\n\nנשלח מיומן נוכחות - שניידר 🍏`;
+        report += `\n📅 ${vacDeclared}\n\nנשלח מיומן נוכחות - מרכז שניידר 🍏`;
         window.open(`https://wa.me/?text=${encodeURIComponent(report)}`, '_blank');
     }
 
