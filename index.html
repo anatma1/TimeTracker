@@ -13,6 +13,7 @@
             --card-bg: #ffffff;
             --text: #2f3640;
             --border: #dcdde1;
+            --week-bg: #edf2f7;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -33,7 +34,7 @@
             text-align: center;
             color: var(--primary);
             margin-bottom: 5px;
-            font-size: 24px;
+            font-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -42,63 +43,58 @@
         
         .daily-greeting {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
+            margin-bottom: 15px;
+            padding: 8px;
             background: #fff;
             border-radius: 8px;
             color: var(--secondary);
         }
         .daily-greeting .greeting-main {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: var(--accent);
             display: block;
-            margin-bottom: 4px;
         }
-        .daily-greeting .greeting-sub {
-            font-size: 16px;
-        }
+        .daily-greeting .greeting-sub { font-size: 14px; }
 
         .quick-action-panel {
             background: #e8f4fd;
             border: 2px solid var(--accent);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 15px;
             margin-bottom: 20px;
             text-align: center;
         }
         .quick-action-panel h2 {
             margin-top: 0;
             color: var(--primary);
-            font-size: 18px;
-            margin-bottom: 15px;
+            font-size: 16px;
+            margin-bottom: 10px;
         }
         .quick-buttons {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
         }
         .quick-btn {
             flex: 1;
-            padding: 20px 10px;
-            font-size: 20px;
+            padding: 15px 5px;
+            font-size: 18px;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 8px;
             border: none;
             color: white;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
         }
-        .quick-btn:active {
-            transform: scale(0.96);
-        }
+        .quick-btn:active { transform: scale(0.96); }
         .quick-btn.btn-in { background-color: #2ecc71; }
         .quick-btn.btn-out { background-color: #e74c3c; }
 
         .header-controls {
             margin-bottom: 20px;
-            padding: 15px;
+            padding: 12px;
             background: var(--bg);
             border-radius: 8px;
         }
@@ -108,15 +104,15 @@
             gap: 15px;
             width: 100%;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .settings-panel {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             justify-content: space-between;
             background: #fff;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
         }
@@ -125,119 +121,161 @@
             align-items: center;
             gap: 5px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 12px;
         }
         input[type="number"], input[type="time"], input[type="text"], select {
-            padding: 8px;
+            padding: 4px 6px;
             border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 15px; 
+            border-radius: 4px;
+            font-size: 14px; 
             font-family: inherit;
+            height: 30px;
+            box-sizing: border-box;
         }
-        .setting-item input { width: 70px; }
-        .setting-item input#monthly-target { width: 90px; } /* קצת יותר רחב לטקסט ריק */
+        .setting-item input { width: 65px; }
+        .setting-item input#monthly-target { width: 75px; }
         button {
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
         }
 
-        .compact-dashboard {
-            margin-bottom: 25px;
-        }
+        .compact-dashboard { margin-bottom: 20px; }
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
         }
         .stat-card {
             background: var(--primary);
             color: white;
-            padding: 12px 8px;
-            border-radius: 8px;
+            padding: 10px 5px;
+            border-radius: 6px;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
         }
-        .stat-card.vacation-card { background: #e67e22; }
+        .stat-card.vacation-card { background: #e67e22; padding-bottom: 5px; }
         .stat-card.overtime-card { background: #27ae60; }
         .stat-card h3 {
-            margin: 0 0 5px 0;
-            font-size: 12px;
+            margin: 0 0 4px 0;
+            font-size: 11px;
             font-weight: normal;
         }
-        .stat-card .value { 
-            font-size: 20px; 
-            font-weight: bold; 
-        }
-        .stat-card .sub-value { 
-            font-size: 11px; 
-            margin-top: 2px; 
-            opacity: 0.9; 
-        }
+        .stat-card .value { font-size: 18px; font-weight: bold; }
+        .stat-card .sub-value { font-size: 10px; margin-top: 2px; opacity: 0.9; }
         
+        .declared-box {
+            margin-top: 4px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.15);
+            border-radius: 4px;
+            padding: 3px;
+            font-size: 11px;
+        }
+
+        .week-details {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .week-summary-header {
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .week-summary-header::-webkit-details-marker { display: none; }
+        .week-summary-header::after {
+            content: '▼';
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        .week-details[open] .week-summary-header::after {
+            transform: rotate(180deg);
+        }
+
         .day-row {
             display: grid;
-            grid-template-columns: 140px 1fr;
-            gap: 15px;
+            grid-template-columns: 120px 1fr;
+            gap: 10px;
             align-items: center;
-            padding: 12px 10px;
+            padding: 8px 10px;
             border-bottom: 1px solid var(--border);
-            transition: background-color 0.5s;
         }
-        .day-row:nth-child(even) { background-color: #f8f9fa; }
-        .day-row.weekend { background-color: #fff3cd; }
+        .day-row:last-child { border-bottom: none; }
+        .day-row:nth-child(even) { background-color: #fcfcfc; }
+        .day-row.weekend { background-color: #fff8e1; }
+        
+        /* עיצוב הדגשה ליום הנוכחי בצהוב זוהר */
+        .day-row.today-highlight {
+            background-color: #fff9c4 !important;
+            border: 2px solid #fbc02d !important;
+            box-shadow: 0 0 8px rgba(251, 192, 45, 0.4);
+            border-radius: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
         .day-info {
             font-weight: bold;
             color: var(--secondary);
-            font-size: 14px;
+            font-size: 13px;
         }
         .inputs-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
         }
+        .inputs-group select { font-size: 13px; height: 28px; padding: 2px 6px; }
         .time-inputs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-wrap: wrap;
         }
         .time-block {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             background: #ebeef5;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
         .time-display {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: var(--primary);
-            min-width: 42px;
+            min-width: 40px;
             text-align: center;
         }
         .punch-btn {
-            background-color: #2ecc71;
-            padding: 6px 10px;
+            padding: 4px 8px;
             font-weight: bold;
-            border-radius: 6px;
-            color: white;
-            border: none;
-            font-size: 13px;
+            border-radius: 4px;
+            font-size: 12px;
+            height: 24px;
         }
-        .punch-btn.btn-out { background-color: #e74c3c; }
         .edit-btn, .save-btn {
-            padding: 6px 10px;
-            font-size: 13px;
+            padding: 4px 8px;
+            font-size: 12px;
+            height: 28px;
         }
         .edit-btn { background-color: #95a5a6; }
         .save-btn { background-color: #f39c12; }
@@ -245,107 +283,92 @@
         .daily-total {
             font-weight: bold;
             color: var(--accent);
-            font-size: 15px;
-        }
-        .week-summary {
-            background-color: #dfe6e9;
-            padding: 12px 15px;
-            font-weight: bold;
-            color: var(--primary);
-            border-radius: 6px;
-            margin: 10px 0 20px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-right: 4px solid var(--accent);
             font-size: 14px;
         }
 
+        .week-summary-footer {
+            background-color: var(--week-bg);
+            padding: 10px 15px;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-top: 2px solid #dcdde1;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .weekly-extra-input {
+            width: 70px !important;
+            height: 26px !important;
+            padding: 2px 4px !important;
+            font-size: 13px !important;
+        }
+
         .bottom-section {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 25px;
+            padding-top: 15px;
             border-top: 2px dashed var(--border);
         }
         .notes-section {
             background: var(--bg);
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             border: 1px solid var(--border);
         }
-        .notes-section h3 {
-            margin-top: 0;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        .add-task { display: flex; gap: 10px; margin-bottom: 20px; }
+        .notes-section h3 { margin-top: 0; font-size: 15px; margin-bottom: 10px; }
+        .add-task { display: flex; gap: 8px; margin-bottom: 15px; }
         .add-task input { flex-grow: 1; }
         .task-list { list-style: none; padding: 0; margin: 0; }
         .task-item {
-            display: flex; align-items: center; gap: 12px;
-            background: white; padding: 12px; border-radius: 6px;
-            margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 10px;
+            background: white; padding: 8px 10px; border-radius: 6px;
+            margin-bottom: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .task-item.done span { text-decoration: line-through; color: #95a5a6; }
-        .task-item span { flex-grow: 1; font-size: 15px; }
-        input[type="checkbox"] { width: 20px; height: 20px; }
+        .task-item span { flex-grow: 1; font-size: 14px; }
+        input[type="checkbox"] { width: 18px; height: 18px; }
 
         .whatsapp-btn {
             background-color: #25D366;
             color: white;
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             font-size: 16px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 15px;
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            transition: background-color 0.2s;
+            gap: 8px;
         }
-        .whatsapp-btn:hover { background-color: #128C7E; }
-
         .footer-credits {
-            text-align: center;
-            font-size: 11px;
-            color: #7f8c8d;
-            margin-top: 25px;
-            padding-bottom: 10px;
+            text-align: center; font-size: 11px; color: #7f8c8d;
+            margin-top: 20px; padding-bottom: 10px;
         }
 
         @media (max-width: 768px) {
             .day-row {
                 grid-template-columns: 1fr;
-                gap: 10px;
-                padding: 15px;
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                margin-bottom: 10px;
-                background-color: white;
+                gap: 6px;
+                padding: 10px;
             }
-            .day-row:nth-child(even) { background-color: white; }
             .day-info {
-                font-size: 15px;
-                border-bottom: 1px solid var(--bg);
-                padding-bottom: 8px;
+                font-size: 14px;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 4px;
             }
-            .inputs-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            select { width: 100%; margin-bottom: 5px; }
-            .time-inputs {
-                justify-content: flex-start;
-                gap: 8px;
-            }
+            .inputs-group { flex-direction: column; align-items: stretch; gap: 6px;}
+            select { width: 100%; }
+            .time-inputs { justify-content: flex-start; }
             .time-block { flex: 1; justify-content: center; }
-            .daily-total { text-align: left; margin-top: 5px; }
-            .week-summary { flex-direction: column; gap: 10px; text-align: center; }
+            .daily-total { text-align: left; }
+            .week-summary-footer { flex-direction: column; align-items: flex-start; }
             .dashboard { grid-template-columns: repeat(3, 1fr); }
             .settings-panel { flex-direction: column; align-items: stretch; }
             .setting-item { justify-content: space-between; }
-            .setting-item input { width: 100px; text-align: center; }
         }
         @media (max-width: 480px) {
             .dashboard { grid-template-columns: repeat(2, 1fr); }
@@ -356,10 +379,7 @@
 <body>
 
 <div class="container">
-    <h1>
-        📇⏱️ יומן נוכחות - שניידר
-    </h1>
-    
+    <h1>📇⏱️ יומן נוכחות - שניידר</h1>
     <div class="daily-greeting" id="daily-greeting"></div>
     
     <div class="quick-action-panel">
@@ -391,8 +411,12 @@
                 <input type="number" id="weekly-hours" min="0">
             </div>
             <div class="setting-item">
-                <label>ערך יום שעתי:</label>
+                <label title="ערך יום כפי שמשאבי אנוש מחשבים (למשל 06:24)">ערך יום (מערכת):</label>
                 <input type="time" id="daily-value">
+            </div>
+            <div class="setting-item">
+                <label title="כמה שעות את עובדת ביום בפועל? (יחשב את ימי החופש)">יום מלא שלי:</label>
+                <input type="time" id="my-full-day">
             </div>
         </div>
     </div>
@@ -416,9 +440,10 @@
                 <div class="value" id="stat-overtime">0:00</div>
             </div>
             <div class="stat-card vacation-card">
-                <h3>חופש להצהרה</h3>
+                <h3>חופש להצהרה (חוסר)</h3>
                 <div class="value" id="stat-vacation-days">0 ימים</div>
                 <div class="sub-value" id="stat-vacation-hours">אין חוסר</div>
+                <div class="declared-box" id="stat-vacation-declared">הוצהר החודש: 0</div>
             </div>
         </div>
     </div>
@@ -442,7 +467,7 @@
 </div>
 
 <div class="footer-credits">
-    &copy; כל הזכויות שמורות לענת מסלנסקי - מרכז שניידר
+    &copy; כל הזכויות שמורות לענת מסלנסקי - דיאטנית קלינית.
 </div>
 
 <script>
@@ -453,14 +478,10 @@
     let workData = JSON.parse(localStorage.getItem('workHoursData')) || {};
     let editModes = {}; 
 
-    // אתחול הגדרות גלובליות אם לא קיימות
     if (!workData.settings) {
-        workData.settings = {
-            jobPct: 100,
-            weeklyHours: 40,
-            dailyValue: '08:00'
-        };
+        workData.settings = { jobPct: 100, weeklyHours: 40, dailyValue: '08:00', myFullDay: '08:00' };
     }
+    if (!workData.settings.myFullDay) workData.settings.myFullDay = workData.settings.dailyValue || '08:00';
 
     const monthDisplay = document.getElementById('current-month-display');
     const calendarContainer = document.getElementById('calendar-container');
@@ -469,15 +490,15 @@
     const jobPctInput = document.getElementById('job-pct');
     const weeklyHoursInput = document.getElementById('weekly-hours');
     const dailyValueInput = document.getElementById('daily-value');
+    const myFullDayInput = document.getElementById('my-full-day');
 
     function init() {
         const now = new Date();
         const todayName = new Intl.DateTimeFormat('he-IL', { weekday: 'long', day: 'numeric', month: 'long' }).format(now);
         document.getElementById('quick-punch-title').textContent = `החתמה מהירה (${todayName})`;
-
         setDailyGreeting(now.getDay());
 
-        const inputs = [targetInput, jobPctInput, weeklyHoursInput, dailyValueInput];
+        const inputs = [targetInput, jobPctInput, weeklyHoursInput, dailyValueInput, myFullDayInput];
         inputs.forEach(input => {
             input.addEventListener('change', () => {
                 saveSettings();
@@ -495,37 +516,19 @@
     function setDailyGreeting(dayOfWeek) {
         let message = "";
         const generalMessages = [
-            "לא לשכוח 7+",
-            "צדיקה, בחרת ימי הדרכה לסטאז'?",
-            "יום קסום ✨",
-            "הכי בבית - שניידר 🏥",
-            "לא לשכוח - אפשר להצהיר על ימי ראשון כיום אקדמי",
-            "אל תשכחו לשתות מים, הסנדלר הולך יחף! 💧",
-            "נעזרתן היום במחשבון ה-TPN? 💻",
-            "לא לשכוח לעדכן שעות איסוף נתונים ומחקר 📊",
-            "מישהי פה קראה כבר את הנחיות ESPEN המעודכנות? 📚",
-            "צוות של אלופות! שיהיה יום פורה 💪",
-            "לא לשכוח לנשום עמוק בין מטופל למטופל 🧘‍♀️"
+            "לא לשכוח 7+", "צדיקה, בחרת ימי הדרכה לסטאז'?", "יום קסום ✨", 
+            "הכי בבית - שניידר 🏥", "לא לשכוח - אפשר להצהיר על ימי ראשון כיום אקדמי", 
+            "אל תשכחו לשתות מים, הסנדלר הולך יחף! 💧", "נעזרתן היום במחשבון ה-TPN? 💻", 
+            "לא לשכוח לעדכן שעות איסוף נתונים ומחקר 📊", "מישהי פה קראה כבר את הנחיות ESPEN המעודכנות? 📚", 
+            "צוות של אלופות! שיהיה יום פורה 💪", "לא לשכוח לנשום עמוק בין מטופל למטופל 🧘‍♀️"
         ];
+        if (dayOfWeek === 0) message = "שביזות יום א' שלום ☕";
+        else if (dayOfWeek === 2) message = "פעמיים כי טוב 🌻";
+        else if (dayOfWeek === 4) message = "חמישי שמח! 🎉";
+        else if (dayOfWeek === 5 || dayOfWeek === 6) message = 'סופ"ש נעים ורגוע 🌸';
+        else message = generalMessages[Math.floor(Math.random() * generalMessages.length)];
 
-        if (dayOfWeek === 0) { 
-            message = "שביזות יום א' שלום ☕";
-        } else if (dayOfWeek === 2) { 
-            message = "פעמיים כי טוב 🌻";
-        } else if (dayOfWeek === 4) { 
-            message = "חמישי שמח! 🎉";
-        } else if (dayOfWeek === 5 || dayOfWeek === 6) { 
-            message = 'סופ"ש נעים ורגוע 🌸';
-        } else { 
-            const randomIndex = Math.floor(Math.random() * generalMessages.length);
-            message = generalMessages[randomIndex];
-        }
-
-        const greetingHtml = `
-            <span class="greeting-main">יום טוב ועבודה נעימה!</span>
-            <span class="greeting-sub">${message}</span>
-        `;
-        document.getElementById('daily-greeting').innerHTML = greetingHtml;
+        document.getElementById('daily-greeting').innerHTML = `<span class="greeting-main">יום טוב ועבודה נעימה!</span><span class="greeting-sub">${message}</span>`;
     }
 
     function changeMonth(delta) {
@@ -541,24 +544,20 @@
 
     function quickPunch(field) {
         const now = new Date();
-        const realYear = now.getFullYear();
-        const realMonth = now.getMonth();
-        const todayDate = now.getDate();
-        
-        currentDate = new Date(realYear, realMonth, 1);
+        currentDate = new Date(now.getFullYear(), now.getMonth(), 1);
         editModes = {};
         
         const key = getMonthKey();
-        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
-        if (!workData[key].days[todayDate]) workData[key].days[todayDate] = {};
+        const todayDate = now.getDate();
         
+        if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
+        if (!workData[key].days[todayDate]) workData[key].days[todayDate] = {};
         if(workData[key].days[todayDate].type === 'manual') {
             workData[key].days[todayDate].type = 'work';
             workData[key].days[todayDate].isManualMode = false;
-        } else if (!workData[key].days[todayDate].type) {
+        } else if (!workData[key].days[todayDate].type || workData[key].days[todayDate].type === 'day_off') {
             workData[key].days[todayDate].type = 'work';
         }
-        
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         
         renderMonth(); 
@@ -567,39 +566,32 @@
         setTimeout(() => {
             const todayRow = document.getElementById(`row-${todayDate}`);
             if(todayRow) {
+                const detailsEl = todayRow.closest('details');
+                if(detailsEl) detailsEl.open = true;
+                
                 todayRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                todayRow.style.backgroundColor = '#e8f6f3';
-                setTimeout(() => {
-                    todayRow.style.backgroundColor = '';
-                }, 1500);
             }
         }, 100);
     }
 
     function saveSettings() {
         const key = getMonthKey();
-        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
-        
-        // שמירת שעות התקן הייחודיות לחודש
+        if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
         workData[key].target = targetInput.value;
-        
-        // שמירת ההגדרות הגלובליות שייגררו לכל חודש
         workData.settings.jobPct = jobPctInput.value;
         workData.settings.weeklyHours = weeklyHoursInput.value;
         workData.settings.dailyValue = dailyValueInput.value;
-        
+        workData.settings.myFullDay = myFullDayInput.value;
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         renderMonth(); 
     }
 
     function saveData(day, field, value) {
         const key = getMonthKey();
-        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
         if (!workData[key].days[day]) workData[key].days[day] = {};
-        
         workData[key].days[day][field] = value;
         localStorage.setItem('workHoursData', JSON.stringify(workData));
-        
         if (field === 'type') {
             if(value !== 'work') workData[key].days[day].isManualMode = false;
             renderMonth(); 
@@ -608,25 +600,30 @@
         }
     }
 
+    function saveWeeklyExtra(weekNum, value) {
+        const key = getMonthKey();
+        if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
+        if (!workData[key].weeks) workData[key].weeks = {};
+        if (!workData[key].weeks[weekNum]) workData[key].weeks[weekNum] = {};
+        
+        workData[key].weeks[weekNum].extraHours = value;
+        localStorage.setItem('workHoursData', JSON.stringify(workData));
+        updateDashboard();
+    }
+
     function setTimeNow(day, field) {
         const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const timeString = `${hours}:${minutes}`;
+        const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
         saveData(day, field, timeString);
         renderMonth(); 
     }
 
-    function toggleEditMode(day) {
-        editModes[day] = !editModes[day];
-        renderMonth(); 
-    }
-
+    function toggleEditMode(day) { editModes[day] = !editModes[day]; renderMonth(); }
+    
     function toggleManualMode(day) {
         const key = getMonthKey();
-        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
         if (!workData[key].days[day]) workData[key].days[day] = {};
-        
         workData[key].days[day].isManualMode = !workData[key].days[day].isManualMode;
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         renderMonth();
@@ -634,18 +631,13 @@
 
     function addTask() {
         const input = document.getElementById('new-task-input');
-        const text = input.value.trim();
-        if(!text) return;
-        
+        if(!input.value.trim()) return;
         const key = getMonthKey();
-        if (!workData[key]) workData[key] = { days: {}, tasks: [] };
+        if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
         if (!workData[key].tasks) workData[key].tasks = [];
-        
-        workData[key].tasks.push({ text: text, done: false });
+        workData[key].tasks.push({ text: input.value.trim(), done: false });
         localStorage.setItem('workHoursData', JSON.stringify(workData));
-        
-        input.value = '';
-        renderTasks();
+        input.value = ''; renderTasks();
     }
 
     function toggleTask(index) {
@@ -654,28 +646,21 @@
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         renderTasks();
     }
-
     function deleteTask(index) {
         const key = getMonthKey();
         workData[key].tasks.splice(index, 1);
         localStorage.setItem('workHoursData', JSON.stringify(workData));
         renderTasks();
     }
-
     function renderTasks() {
         const key = getMonthKey();
         const tasks = (workData[key] && workData[key].tasks) ? workData[key].tasks : [];
         const list = document.getElementById('task-list');
         list.innerHTML = '';
-        
         tasks.forEach((task, index) => {
-            list.innerHTML += `
-                <li class="task-item ${task.done ? 'done' : ''}">
-                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})">
-                    <span>${task.text}</span>
-                    <button class="delete-btn" onclick="deleteTask(${index})">מחק</button>
-                </li>
-            `;
+            list.innerHTML += `<li class="task-item ${task.done ? 'done' : ''}">
+                <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${index})">
+                <span>${task.text}</span><button class="delete-btn" onclick="deleteTask(${index})">מחק</button></li>`;
         });
     }
 
@@ -696,118 +681,152 @@
         return parseFloat(val) || 0;
     }
 
+    function getDecimalFromTimeStr(timeStr) {
+        if(!timeStr || !timeStr.includes(':')) return 0;
+        const parts = timeStr.split(':');
+        return parseInt(parts[0]) + (parseInt(parts[1]) / 60);
+    }
+
+    function saveWeekState(weekNum, isOpen) {
+        const key = getMonthKey() + `-w${weekNum}`;
+        localStorage.setItem(key, isOpen ? 'true' : 'false');
+    }
+
     function renderMonth() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        
         document.getElementById('next-month').disabled = (year >= maxYear && month >= maxMonth);
         monthDisplay.textContent = new Intl.DateTimeFormat('he-IL', { month: 'long', year: 'numeric' }).format(currentDate);
         
         const key = getMonthKey();
-        const monthData = workData[key] || { days: {}, tasks: [] };
+        const monthData = workData[key] || { days: {}, weeks: {}, tasks: [] };
+        if(!monthData.weeks) monthData.weeks = {};
         
-        // יעד חודשי ייחודי לחודש הנוכחי בלבד
         targetInput.value = monthData.target !== undefined ? monthData.target : '';
-        
-        // שליפת ההגדרות הגלובליות שייגררו לכל חודש
         jobPctInput.value = workData.settings.jobPct || 100;
         weeklyHoursInput.value = workData.settings.weeklyHours || 40;
         
-        let storedDv = workData.settings.dailyValue || '08:00';
+        let storedDv = workData.settings.dailyValue || '06:24';
         if (!storedDv.includes(':')) {
             storedDv = formatHours(parseFloat(storedDv));
             if (storedDv.length < 5) storedDv = '0' + storedDv; 
         }
         dailyValueInput.value = storedDv;
 
+        let storedFd = workData.settings.myFullDay || '08:00';
+        if (!storedFd.includes(':')) {
+            storedFd = formatHours(parseFloat(storedFd));
+            if (storedFd.length < 5) storedFd = '0' + storedFd; 
+        }
+        myFullDayInput.value = storedFd;
+
         calendarContainer.innerHTML = '';
         const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const todayObj = new Date();
+        
+        let weekNum = 1;
+        let currentWeekDetails = null;
 
         for (let i = 1; i <= daysInMonth; i++) {
             const date = new Date(year, month, i);
             const dayOfWeek = date.getDay();
-            const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
             const dayName = new Intl.DateTimeFormat('he-IL', { weekday: 'long' }).format(date);
+            
+            const isToday = (date.getDate() === todayObj.getDate() && 
+                             date.getMonth() === todayObj.getMonth() && 
+                             date.getFullYear() === todayObj.getFullYear());
+            
+            if (!currentWeekDetails || (dayOfWeek === 0 && i !== 1)) {
+                if (currentWeekDetails) {
+                    appendWeekFooter(currentWeekDetails, weekNum - 1, monthData);
+                    calendarContainer.appendChild(currentWeekDetails);
+                }
+                currentWeekDetails = document.createElement('details');
+                currentWeekDetails.className = 'week-details';
+                
+                const stateKey = key + `-w${weekNum}`;
+                const savedState = localStorage.getItem(stateKey);
+                const isTodayWeek = (todayObj.getMonth() === month && todayObj.getFullYear() === year && i <= todayObj.getDate() && todayObj.getDate() < i + 7 - dayOfWeek);
+                
+                if (savedState === 'true' || (savedState === null && (weekNum === 1 || isTodayWeek))) {
+                    currentWeekDetails.open = true;
+                }
+                
+                currentWeekDetails.dataset.week = weekNum;
+                currentWeekDetails.addEventListener('toggle', function() {
+                    saveWeekState(this.dataset.week, this.open);
+                });
+
+                const summary = document.createElement('summary');
+                summary.className = 'week-summary-header';
+                summary.innerHTML = `<span>שבוע ${weekNum}</span><span id="header-week-total-${weekNum}" style="font-size:13px; font-weight:normal;"></span>`;
+                currentWeekDetails.appendChild(summary);
+                weekNum++;
+            }
             
             const dayData = monthData.days[i] || {};
             const isEditing = editModes[i] || false;
-            
             let dayType = dayData.type || 'work';
-            if (dayType === 'manual') {
-                dayType = 'work';
-                dayData.isManualMode = true;
-            }
-            
+            if (dayType === 'manual') { dayType = 'work'; dayData.isManualMode = true; }
             const isManualView = dayData.isManualMode || false;
             
             const row = document.createElement('div');
-            row.className = `day-row ${isWeekend ? 'weekend' : ''}`;
+            
+            let rowClasses = 'day-row';
+            if (dayOfWeek === 5 || dayOfWeek === 6) rowClasses += ' weekend';
+            if (isToday) rowClasses += ' today-highlight';
+            
+            row.className = rowClasses;
             row.id = `row-${i}`; 
             
             let inputsHtml = '';
-            
-            if (isWeekend) {
+            if (dayOfWeek === 5 || dayOfWeek === 6) {
                 const isChecked = dayData.kitchenDuty ? 'checked' : '';
-                inputsHtml = `
-                    <div class="inputs-group">
-                        <label class="kitchen-duty">
-                            <input type="checkbox" onchange="saveData(${i}, 'kitchenDuty', this.checked)" ${isChecked}>
-                            תורנות מטבח (+ שעה 1)
-                        </label>
-                    </div>
-                `;
+                inputsHtml = `<div class="inputs-group"><label class="kitchen-duty"><input type="checkbox" onchange="saveData(${i}, 'kitchenDuty', this.checked)" ${isChecked}> תורנות מטבח (+ שעה 1)</label></div>`;
             } else {
-                const timeIn = dayData.in || '';
-                const timeOut = dayData.out || '';
-                const manualHours = dayData.manualHours || '';
-                
+                const timeIn = dayData.in || ''; const timeOut = dayData.out || ''; const manualHours = dayData.manualHours || '';
                 let timeControlsHtml = '';
                 
                 if (dayType === 'work') {
                     if (isManualView) {
                         timeControlsHtml = `
                             <div class="time-inputs">
-                                <label style="font-weight:bold; color:var(--primary);">סה"כ יומי: 
-                                    <input type="time" value="${manualHours}" onchange="saveData(${i}, 'manualHours', this.value)">
-                                </label>
-                                <button onclick="toggleManualMode(${i})" class="edit-btn" style="background:#7f8c8d;" title="חזרה לשעות כניסה/יציאה">🔙 חזור</button>
-                            </div>
-                        `;
+                                <label style="font-weight:bold; color:var(--primary); font-size:13px;">סה"כ יומי: <input type="time" value="${manualHours}" onchange="saveData(${i}, 'manualHours', this.value)"></label>
+                                <button onclick="toggleManualMode(${i})" class="edit-btn" style="background:#7f8c8d;" title="חזרה">🔙</button>
+                            </div>`;
                     } else if (isEditing) {
                         timeControlsHtml = `
                             <div class="time-inputs">
                                 <label>כניסה: <input type="time" value="${timeIn}" onchange="saveData(${i}, 'in', this.value)"></label>
                                 <label>יציאה: <input type="time" value="${timeOut}" onchange="saveData(${i}, 'out', this.value)"></label>
                                 <button onclick="toggleEditMode(${i})" class="save-btn">שמור</button>
-                            </div>
-                        `;
+                            </div>`;
                     } else {
                         timeControlsHtml = `
                             <div class="time-inputs">
-                                <div class="time-block">
-                                    <button onclick="setTimeNow(${i}, 'in')" class="punch-btn">כניסה</button>
-                                    <span class="time-display">${timeIn || '--:--'}</span>
-                                </div>
-                                <div class="time-block">
-                                    <button onclick="setTimeNow(${i}, 'out')" class="punch-btn btn-out">יציאה</button>
-                                    <span class="time-display">${timeOut || '--:--'}</span>
-                                </div>
-                                <button onclick="toggleEditMode(${i})" class="edit-btn" title="עריכת כניסה/יציאה ידנית">✎</button>
-                                <button onclick="toggleManualMode(${i})" class="edit-btn manual-btn" title="הזנת סה״כ שעות">⏳ סה"כ ידני</button>
-                            </div>
-                        `;
+                                <div class="time-block"><button onclick="setTimeNow(${i}, 'in')" class="punch-btn">כניסה</button><span class="time-display">${timeIn || '--:--'}</span></div>
+                                <div class="time-block"><button onclick="setTimeNow(${i}, 'out')" class="punch-btn btn-out">יציאה</button><span class="time-display">${timeOut || '--:--'}</span></div>
+                                <button onclick="toggleEditMode(${i})" class="edit-btn">✎</button>
+                                <button onclick="toggleManualMode(${i})" class="edit-btn manual-btn">⏳ סה"כ ידני</button>
+                            </div>`;
                     }
-                } else if (dayType === 'holiday') {
-                    timeControlsHtml = `<span style="color: #e74c3c; font-weight: bold;">לא מחושב. התקן הופחת.</span>`;
-                } else if (dayType === 'vacation' || dayType === 'training' || dayType === 'eve' || dayType === 'chol_hamoed') {
-                    timeControlsHtml = `<span style="color:var(--secondary); font-size:14px;">השעות מחושבות אוטומטית</span>`;
+                } else if (dayType === 'day_off') { 
+                    timeControlsHtml = `<span style="color:var(--secondary); font-size:13px; font-weight:bold;">יום חופשי (0 שעות)</span>`;
+                } else if (dayType === 'holiday') { 
+                    timeControlsHtml = `<span style="color: #e74c3c; font-weight: bold; font-size:13px;">לא מחושב. התקן הופחת.</span>`;
+                } else if (dayType === 'vacation') { 
+                    timeControlsHtml = `<span style="color:var(--secondary); font-size:13px;">מוזן כיום חופש ומתווסף למונה.</span>`;
+                } else { 
+                    timeControlsHtml = `<span style="color:var(--secondary); font-size:13px;">מחושב אוטומטית למערכת.</span>`; 
                 }
                 
                 inputsHtml = `
                     <div class="inputs-group">
                         <select onchange="saveData(${i}, 'type', this.value)">
                             <option value="work" ${dayType === 'work' ? 'selected' : ''}>עבודה רגילה</option>
-                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>יום חופש</option>
+                            <option value="day_off" ${dayType === 'day_off' ? 'selected' : ''}>יום חופשי (קבוע)</option>
+                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>יום חופש (הצהרה)</option>
                             <option value="training" ${dayType === 'training' ? 'selected' : ''}>יום השתלמות</option>
                             <option value="eve" ${dayType === 'eve' ? 'selected' : ''}>ערב חג (1/2 יום)</option>
                             <option value="chol_hamoed" ${dayType === 'chol_hamoed' ? 'selected' : ''}>חוה"מ (3/5 יום)</option>
@@ -815,56 +834,49 @@
                         </select>
                         ${timeControlsHtml}
                         <div class="daily-total" id="total-${i}">0:00</div>
-                    </div>
-                `;
+                    </div>`;
             }
-
-            row.innerHTML = `
-                <div class="day-info">${i} ב${new Intl.DateTimeFormat('he-IL', { month: 'short' }).format(date)}, ${dayName}</div>
-                ${inputsHtml}
-            `;
-            calendarContainer.appendChild(row);
-
-            if (dayOfWeek === 6 || i === daysInMonth) {
-                const summaryRow = document.createElement('div');
-                summaryRow.className = 'week-summary';
-                summaryRow.innerHTML = `
-                    <div>סיכום שבוע:</div>
-                    <div>בוצעו: <span id="week-worked-${i}" style="color:var(--accent);font-size:18px;">0:00</span> / יעד: <span id="week-target-${i}">0:00</span></div>
-                `;
-                calendarContainer.appendChild(summaryRow);
-            }
+            row.innerHTML = `<div class="day-info">${i} ${dayName}</div>${inputsHtml}`;
+            currentWeekDetails.appendChild(row);
+        }
+        
+        if (currentWeekDetails) {
+            appendWeekFooter(currentWeekDetails, weekNum - 1, monthData);
+            calendarContainer.appendChild(currentWeekDetails);
         }
         updateDashboard();
     }
 
-    function calculateTimeDiff(timeIn, timeOut) {
-        if (!timeIn || !timeOut) return 0;
-        const [inHours, inMins] = timeIn.split(':').map(Number);
-        const [outHours, outMins] = timeOut.split(':').map(Number);
-        
-        let inDate = new Date(2000, 0, 1, inHours, inMins);
-        let outDate = new Date(2000, 0, 1, outHours, outMins);
-        
-        if (outDate < inDate) outDate.setDate(outDate.getDate() + 1);
-        
-        return (outDate - inDate) / (1000 * 60 * 60);
+    function appendWeekFooter(container, weekIndex, monthData) {
+        const extraHours = (monthData.weeks && monthData.weeks[weekIndex]) ? monthData.weeks[weekIndex].extraHours || '' : '';
+        const footer = document.createElement('div');
+        footer.className = 'week-summary-footer';
+        footer.innerHTML = `
+            <div><label>תוספת שעות ידנית לשבוע: <input type="time" class="weekly-extra-input" value="${extraHours}" onchange="saveWeeklyExtra(${weekIndex}, this.value)"></label></div>
+            <div>סה"כ בוצע השבוע: <span id="week-worked-${weekIndex}" style="color:var(--accent); font-size:16px;">0:00</span> / יעד: <span id="week-target-${weekIndex}">0:00</span></div>
+        `;
+        container.appendChild(footer);
     }
 
     function updateDashboard() {
         const key = getMonthKey();
-        const monthData = workData[key] || { days: {} };
+        const monthData = workData[key] || { days: {}, weeks: {} };
+        if(!monthData.weeks) monthData.weeks = {};
+        
         const baseMonthlyTarget = parseFloat(targetInput.value) || 0;
         const dailyValueDecimal = getDailyValueDecimal();
+        const myFullDayDecimal = getDecimalFromTimeStr(myFullDayInput.value) || dailyValueDecimal;
         const weeklyHoursAvg = parseFloat(weeklyHoursInput.value) || 40;
         const dailyAvgForTarget = weeklyHoursAvg / 5; 
         
         let adjustedMonthlyTarget = baseMonthlyTarget;
         let totalDecimalWorked = 0;
+        let declaredVacationsCount = 0;
         
         let weeklyWorkedCounter = 0;
         let standardDaysInWeek = 0;
         let holidaysInWeek = 0;
+        let weekNum = 1;
 
         const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
         
@@ -891,24 +903,21 @@
                     adjustedMonthlyTarget -= dailyValueDecimal; 
                     if (totalEl) totalEl.textContent = "0:00";
                 }
-                else if (dayType === 'vacation' || dayType === 'training') {
-                    dailyHours = dailyValueDecimal;
-                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`;
+                else if (dayType === 'day_off') { 
+                    dailyHours = 0; 
+                    if (totalEl) totalEl.textContent = `0:00`; 
                 }
-                else if (dayType === 'eve') {
-                    dailyHours = dailyValueDecimal * 0.5;
-                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`;
+                else if (dayType === 'vacation') { 
+                    dailyHours = dailyValueDecimal; 
+                    declaredVacationsCount++;
+                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; 
                 }
-                else if (dayType === 'chol_hamoed') {
-                    dailyHours = dailyValueDecimal * 0.6; 
-                    if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`;
-                } 
+                else if (dayType === 'training') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                else if (dayType === 'eve') { dailyHours = dailyValueDecimal * 0.5; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
+                else if (dayType === 'chol_hamoed') { dailyHours = dailyValueDecimal * 0.6; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; } 
                 else if (dayType === 'work') {
                     if (isManualView) {
-                        if (dayData.manualHours) {
-                            const parts = dayData.manualHours.split(':');
-                            dailyHours = parseInt(parts[0]) + (parseInt(parts[1]) / 60);
-                        }
+                        if (dayData.manualHours) dailyHours = getDecimalFromTimeStr(dayData.manualHours);
                     } else {
                         dailyHours = calculateTimeDiff(dayData.in, dayData.out);
                     }
@@ -920,16 +929,27 @@
             weeklyWorkedCounter += dailyHours;
 
             if (dayOfWeek === 6 || i === daysInMonth) {
+                let weekExtraDec = 0;
+                if(monthData.weeks[weekNum] && monthData.weeks[weekNum].extraHours) {
+                    weekExtraDec = getDecimalFromTimeStr(monthData.weeks[weekNum].extraHours);
+                }
+                weeklyWorkedCounter += weekExtraDec;
+                totalDecimalWorked += weekExtraDec;
+
                 const weekTargetDecimal = Math.max(0, (standardDaysInWeek - holidaysInWeek) * dailyAvgForTarget);
                 
-                const workedEl = document.getElementById(`week-worked-${i}`);
-                const targetEl = document.getElementById(`week-target-${i}`);
+                const workedEl = document.getElementById(`week-worked-${weekNum}`);
+                const targetEl = document.getElementById(`week-target-${weekNum}`);
+                const headerPreviewEl = document.getElementById(`header-week-total-${weekNum}`);
+                
                 if(workedEl) workedEl.textContent = formatHours(weeklyWorkedCounter);
                 if(targetEl) targetEl.textContent = formatHours(weekTargetDecimal);
+                if(headerPreviewEl) headerPreviewEl.textContent = `(בוצע: ${formatHours(weeklyWorkedCounter)})`;
 
                 weeklyWorkedCounter = 0;
                 standardDaysInWeek = 0;
                 holidaysInWeek = 0;
+                weekNum++;
             }
         }
 
@@ -943,15 +963,18 @@
 
         const vacDaysEl = document.getElementById('stat-vacation-days');
         const vacHoursEl = document.getElementById('stat-vacation-hours');
+        const vacDeclaredEl = document.getElementById('stat-vacation-declared');
         
-        if (remainingDecimal > 0 && dailyValueDecimal > 0) {
-            const daysToDeclare = Math.round(remainingDecimal / dailyValueDecimal);
+        if (remainingDecimal > 0 && myFullDayDecimal > 0) {
+            const daysToDeclare = Math.round(remainingDecimal / myFullDayDecimal);
             vacDaysEl.textContent = `${daysToDeclare} ימים`;
-            vacHoursEl.textContent = `(השלמה ל-${formatHours(remainingDecimal)})`;
+            vacHoursEl.textContent = `(חוסר של ${formatHours(remainingDecimal)})`;
         } else {
             vacDaysEl.textContent = "0 ימים";
             vacHoursEl.textContent = "אין חוסר";
         }
+        
+        vacDeclaredEl.textContent = `הוצהר בפועל: ${declaredVacationsCount} ימים`;
     }
 
     function sendWhatsAppReport() {
@@ -961,21 +984,23 @@
         const remaining = document.getElementById('stat-remaining').innerText;
         const overtime = document.getElementById('stat-overtime').innerText;
         const vacDays = document.getElementById('stat-vacation-days').innerText;
+        const vacDeclared = document.getElementById('stat-vacation-declared').innerText;
 
-        let report = `*סיכום שעות עבודה - ${monthText}* 📊\n\n`;
-        report += `🎯 יעד חודשי מעודכן: ${target}\n`;
-        report += `✅ סך הכל בוצע: ${worked}\n`;
+        let report = `*סיכום נוכחות - ${monthText}* 📊\n\n`;
+        report += `🎯 יעד חודשי: ${target}\n`;
+        report += `✅ סך בוצע: ${worked}\n`;
 
         if (remaining !== "0:00") {
             report += `⏳ שעות חסרות: ${remaining}\n`;
-            report += `🏖️ ימי חופש להצהרה: ${vacDays}\n`;
+            report += `🏖️ ימי חופש חסרים להצהרה: ${vacDays}\n`;
         } else if (overtime !== "0:00") {
             report += `🔥 שעות נוספות: ${overtime}\n`;
         } else {
             report += `✨ עמידה מדויקת ביעד!\n`;
         }
-
-        report += `\nנשלח מתוך אפליקציית דיווח השעות 🍏`;
+        
+        report += `\n📅 ${vacDeclared}\n`;
+        report += `\nנשלח מיומן נוכחות - שניידר 🍏`;
 
         const encodedMessage = encodeURIComponent(report);
         window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
