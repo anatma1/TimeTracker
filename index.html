@@ -133,13 +133,38 @@
         .bulk-action-area {
             grid-column: 1 / -1;
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
             margin-top: 4px;
             padding-top: 6px;
             border-top: 1px dashed var(--border);
+        }
+        .bulk-days-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .bulk-day-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .bulk-day-checkbox input {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+        .bulk-buttons-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+            margin-top: 2px;
         }
 
         input[type="number"], input[type="time"], input[type="text"], select, input[type="date"] {
@@ -151,7 +176,7 @@
             height: 24px;
             box-sizing: border-box;
         }
-        .setting-item input, .setting-item select { width: 65px; }
+        .setting-item select, .setting-item input { width: 65px; }
 
         .setting-item input#monthly-target:placeholder-shown {
             border-color: #e74c3c;
@@ -366,19 +391,20 @@
                 <span class="calc-val" id="lbl-daily-value">06:24</span>
             </div>
             
+            <!-- אזור החלה גורפת עם תיבות סימון (Checkbox) לפי ימים -->
             <div class="bulk-action-area">
-                <div style="display:flex; align-items:center; gap:6px;">
-                    <label style="font-size:12px; font-weight:bold; color:var(--secondary);">יום חופשי קבוע:</label>
-                    <select id="bulk-day-select" style="height:24px; font-size:13px; width:75px; padding:1px;">
-                        <option value="0">ראשון</option>
-                        <option value="1">שני</option>
-                        <option value="2">שלישי</option>
-                        <option value="3">רביעי</option>
-                        <option value="4">חמישי</option>
-                    </select>
-                    <button onclick="applyBulkDayOff()" style="height:24px; padding:0 8px; font-size:12px; background-color:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer;">📅 החל</button>
+                <label style="font-size:12px; font-weight:bold; color:var(--secondary);">ימי חופשי קבועים בשבוע:</label>
+                <div class="bulk-days-row">
+                    <label class="bulk-day-checkbox"><input type="checkbox" class="bulk-day-cb" value="0"> א'</label>
+                    <label class="bulk-day-checkbox"><input type="checkbox" class="bulk-day-cb" value="1"> ב'</label>
+                    <label class="bulk-day-checkbox"><input type="checkbox" class="bulk-day-cb" value="2"> ג'</label>
+                    <label class="bulk-day-checkbox"><input type="checkbox" class="bulk-day-cb" value="3"> ד'</label>
+                    <label class="bulk-day-checkbox"><input type="checkbox" class="bulk-day-cb" value="4"> ה'</label>
                 </div>
-                <button onclick="resetCurrentMonthData()" style="height:24px; padding:0 8px; font-size:12px; background-color:var(--bordo); color:white; border:none; border-radius:4px; cursor:pointer;" title="מחיקת נתוני חודש זה">💥 איפוס החודש</button>
+                <div class="bulk-buttons-row">
+                    <button onclick="applyBulkDaysOff()" style="height:24px; padding:0 8px; font-size:12px; background-color:var(--primary); color:white; border:none; border-radius:4px; cursor:pointer;">📅 החל על כל החודש</button>
+                    <button onclick="resetCurrentMonthData()" style="height:24px; padding:0 8px; font-size:12px; background-color:var(--bordo); color:white; border:none; border-radius:4px; cursor:pointer;" title="מחיקת נתוני חודש זה">💥 איפוס החודש</button>
+                </div>
             </div>
         </div>
     </div>
@@ -516,28 +542,44 @@
         } else { alert('אין נתונים רשומים בחודש זה שניתן לאפס.'); }
     }
 
-    function applyBulkDayOff() {
-        const targetDay = parseInt(document.getElementById('bulk-day-select').value);
+    // פונקציה חדשה להחלה גורפת של ימי חופשי קבועים לפי תיבות הסימון שסומנו (V)
+    function applyBulkDaysOff() {
+        const checkboxes = document.querySelectorAll('.bulk-day-cb');
+        let selectedDays = [];
+        checkboxes.forEach(cb => {
+            if(cb.checked) selectedDays.push(parseInt(cb.value));
+        });
+
+        if (selectedDays.length === 0) {
+            alert('אנא סמני לפחות יום אחד ב-V לפני הלחיצה.');
+            return;
+        }
+
         const key = getMonthKey();
         const year = currentDate.getFullYear(), month = currentDate.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         if (!workData[key]) workData[key] = { days: {}, weeks: {}, tasks: [] };
+        
         let count = 0;
         for (let i = 1; i <= daysInMonth; i++) {
             const date = new Date(year, month, i);
-            if (date.getDay() === targetDay) {
+            if (selectedDays.includes(date.getDay())) {
                 if (!workData[key].days[i]) workData[key].days[i] = {};
+                // מחיל רק על ימים "נקיים" ללא נתונים קודמים
                 if (!workData[key].days[i].in && !workData[key].days[i].out && !workData[key].days[i].manualHours) {
                     workData[key].days[i].type = 'day_off';
                     count++;
                 }
             }
         }
+        
         if(count > 0) {
             localStorage.setItem('workHoursData', JSON.stringify(workData));
             renderMonth();
-            alert(`הוגדרו ${count} ימי חופשי קבועים החודש בהצלחה!`);
-        } else { alert('לא נמצאו ימים פנויים להגדרה או שהימים כבר מכילים שעות עבודה.'); }
+            alert(`הוגדרו בהצלחה ${count} ימי חופשי קבועים לפי הימים שבחרת!`);
+        } else {
+            alert('לא נמצאו ימים פנויים להגדרה או שהם כבר מכילים נתוני שעות.');
+        }
     }
 
     function applyVacationRange(startDay) {
@@ -652,16 +694,11 @@
         localStorage.setItem('workHoursData', JSON.stringify(workData)); renderTasks();
     }
     
-    // סריקת ימי מחלה ועדכון רשימת המשימות בהתאם
     function syncSickLeaveTasks() {
         const key = getMonthKey();
         if (!workData[key]) return;
         if (!workData[key].tasks) workData[key].tasks = [];
-        
-        // סינון המשימות האוטומטיות הישנות של המחלה
         workData[key].tasks = workData[key].tasks.filter(t => !t.text.startsWith("אישור מחלה עבור"));
-        
-        // הוספת משימה עבור כל יום מחלה שנמצא
         for (let day in workData[key].days) {
             if (workData[key].days[day].type === 'sick') {
                 workData[key].tasks.push({
@@ -697,6 +734,15 @@
         return (8 * (parseInt(jobPctSelect.value) || 100)) / 100;
     }
 
+    function calculateTimeDiff(timeIn, timeOut) {
+        if (!timeIn || !timeOut) return 0;
+        const [inHours, inMins] = timeIn.split(':').map(Number);
+        const [outHours, outMins] = timeOut.split(':').map(Number);
+        let inDate = new Date(2000, 0, 1, inHours, inMins), outDate = new Date(2000, 0, 1, outHours, outMins);
+        if (outDate < inDate) outDate.setDate(outDate.getDate() + 1);
+        return (outDate - inDate) / (1000 * 60 * 60);
+    }
+
     function saveWeekState(weekNum, isOpen) { localStorage.setItem(getMonthKey() + `-w${weekNum}`, isOpen ? 'true' : 'false'); }
 
     function renderMonth() {
@@ -706,7 +752,7 @@
         monthDisplay.textContent = new Intl.DateTimeFormat('he-IL', { month: 'long', year: 'numeric' }).format(currentDate);
         
         const key = getMonthKey();
-        syncSickLeaveTasks(); // סנכרון המשימות לפני רינדור
+        syncSickLeaveTasks(); 
         const monthData = workData[key] || { days: {}, weeks: {}, tasks: [] };
         if(!monthData.weeks) monthData.weeks = {};
         
@@ -785,9 +831,9 @@
                     const formattedMinDate = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                     timeControlsHtml = `
                         <div class="time-inputs" style="gap:4px;">
-                            <span style="color:var(--secondary); font-size:11px;">יום חופש</span>
+                            <span style="color:var(--secondary); font-size:11px;">יום חופש 🌴</span>
                             <label style="font-size:10px; color:#e67e22;">עד: <input type="date" id="range-date-${i}" min="${formattedMinDate}" style="height:22px; font-size:11px; width:100px; padding:1px;"></label>
-                            <button onclick="applyVacationRange(${i})" class="range-btn">📅 החל טווח</button>
+                            <button onclick="applyVacationRange(${i})" class="range-btn">📅 החל</button>
                         </div>`;
                 } else { timeControlsHtml = `<span style="color:var(--secondary); font-size:11px;">מחושב אוטומטית</span>`; }
                 
@@ -796,7 +842,7 @@
                         <select onchange="saveData(${i}, 'type', this.value)" style="height:22px; padding:1px;">
                             <option value="work" ${dayType === 'work' ? 'selected' : ''}>עבודה</option>
                             <option value="day_off" ${dayType === 'day_off' ? 'selected' : ''}>יום חופשי</option>
-                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>חופש (הצהרה)</option>
+                            <option value="vacation" ${dayType === 'vacation' ? 'selected' : ''}>חופש (הצהרה) 🌴</option>
                             <option value="sick" ${dayType === 'sick' ? 'selected' : ''}>מחלה (אישור) 🩺</option>
                             <option value="training" ${dayType === 'training' ? 'selected' : ''}>השתלמות</option>
                             <option value="eve" ${dayType === 'eve' ? 'selected' : ''}>ערב חג (1/2)</option>
@@ -811,7 +857,7 @@
             calendarContainer.appendChild(row);
         }
         if (currentWeekDetails) { appendWeekFooter(currentWeekDetails, weekNum - 1, monthData); calendarContainer.appendChild(currentWeekDetails); }
-        renderTasks(); // רינדור סופי של המשימות המעודכנות
+        renderTasks(); 
         updateDashboard();
     }
 
@@ -849,7 +895,6 @@
                 if (dayType === 'holiday') { holidaysInWeek++; adjustedMonthlyTarget -= dailyValueDecimal; if (totalEl) totalEl.textContent = "0:00"; }
                 else if (dayType === 'day_off') { dailyHours = 0; if (totalEl) totalEl.textContent = `0:00`; }
                 else if (dayType === 'vacation') { dailyHours = dailyValueDecimal; declaredVacationsCount++; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
-                // יום מחלה מחושב בדיוק כמו ערך יום מערכת רגיל
                 else if (dayType === 'sick') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
                 else if (dayType === 'training') { dailyHours = dailyValueDecimal; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
                 else if (dayType === 'eve') { dailyHours = dailyValueDecimal * 0.5; if (totalEl) totalEl.textContent = `${formatHours(dailyHours)}`; }
@@ -900,37 +945,6 @@
             vacDaysEl.textContent = `${daysToDeclare} ימים`; vacHoursEl.textContent = `(חוסר של ${formatHours(remainingDecimal)})`;
         } else { vacDaysEl.textContent = "0 ימים"; vacHoursEl.textContent = "אין חוסר"; }
         vacDeclaredEl.textContent = `ביומן: ${declaredVacationsCount} ימים`;
-    }
-
-    function sendWhatsAppReport() {
-        const key = getMonthKey();
-        const monthText = document.getElementById('current-month-display').innerText;
-        const target = document.getElementById('stat-target').innerText;
-        const worked = document.getElementById('stat-worked').innerText;
-        const remaining = document.getElementById('stat-remaining').innerText;
-        const overtime = document.getElementById('stat-overtime').innerText;
-        const vacDays = document.getElementById('stat-vacation-days').innerText;
-        const vacDeclared = document.getElementById('stat-vacation-declared').innerText;
-
-        // ספירת ימי מחלה לצורך הכללה בדו"ח
-        let sickDaysCount = 0;
-        if (workData[key] && workData[key].days) {
-            for (let d in workData[key].days) {
-                if (workData[key].days[d].type === 'sick') sickDaysCount++;
-            }
-        }
-
-        let report = `*סיכום נוכחות - ${monthText}* 📊\n\n`;
-        report += `🎯 יעד חודשי: ${target}\n`;
-        report += `✅ סך בוצע: ${worked}\n`;
-        if (sickDaysCount > 0) report += `🤒 ימי מחלה מדווחים: ${sickDaysCount} ימים\n`;
-
-        if (remaining !== "0:00") {
-            report += `⏳ שעות חסרות: ${remaining}\n`; report += `🏖️ ימי חופש חסרים להצהרה: ${vacDays}\n`;
-        } else if (overtime !== "0:00") { report += `🔥 שעות נוספות: ${overtime}\n`; } 
-        else { report += `✨ עמידה מדויקת ביעד!\n`; }
-        report += `\n📅 ${vacDeclared}\n\nנשלח מיומן נוכחות - מרכז שניידר 🍏`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(report)}`, '_blank');
     }
 
     init();
